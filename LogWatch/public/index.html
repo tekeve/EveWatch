@@ -27,7 +27,6 @@
             
             --col-misc: rgba(0, 100, 255, 0.05);
             --col-misc-border: #4488ff;
-
             --warp-color: #ffeebb;
         }
 
@@ -43,7 +42,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            font-size: 12px; /* Reduced base font */
+            font-size: 12px;
             overflow: hidden;
         }
 
@@ -57,118 +56,126 @@
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
-            height: 38px; /* Slightly slimmer header */
+            height: 38px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             z-index: 100;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
 
         h1 {
-            margin: 0;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-main);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin: 0; font-size: 0.9rem; font-weight: 600;
+            color: var(--text-main); text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px;
         }
         
-        h1::before {
-            content: '';
-            display: block;
-            width: 3px;
-            height: 14px;
-            background: var(--accent-blue);
-        }
+        h1::before { content: ''; display: block; width: 3px; height: 14px; background: var(--accent-blue); }
 
-        #status {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #555;
-            transition: background-color 0.3s;
-        }
-        
+        #status { font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #555; transition: background-color 0.3s; }
         .status-active { background-color: #00ff88; box-shadow: 0 0 6px #00ff88; }
         .status-error { background-color: #ff4444; box-shadow: 0 0 6px #ff4444; }
 
+        /* AGRO DISPLAY STYLES */
+        #agro-display {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+
+        .agro-name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #ffaaaa;
+            background: rgba(80, 0, 0, 0.6);
+            padding: 2px 8px;
+            border: 1px solid #ff4444;
+            border-radius: 3px;
+            animation: agroFlash 1s infinite alternate;
+            white-space: nowrap;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+        }
+
+        @keyframes agroFlash {
+            from { border-color: #ff4444; box-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
+            to { border-color: #ff8888; box-shadow: 0 0 12px rgba(255, 50, 50, 0.6); }
+        }
+
+        .header-right { display: flex; gap: 8px; align-items: center; }
+
         /* Button Styling */
-        .btn-save {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            font-size: 0.7rem;
+        .btn-header {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted);
+            padding: 4px 10px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer; border-radius: 2px; transition: all 0.2s ease;
+        }
+        .btn-header:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: var(--accent-blue); }
+        .btn-header:active { transform: translateY(1px); }
+
+        /* --- TABS --- */
+        .tabs-container {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--card-border);
+            padding: 0 8px;
+            flex-shrink: 0;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            padding: 8px 16px;
+            cursor: pointer;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
+            font-size: 0.75rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
         }
-        .btn-save:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border-color: var(--accent-blue);
-        }
-        .btn-save:active { transform: translateY(1px); }
+        .tab-btn:hover { color: #aaa; }
+        .tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
 
-        /* --- DASHBOARD GRID --- */
-        #dashboard {
+        /* --- VIEWS --- */
+        .view-container {
+            display: none;
             flex-grow: 1;
-            padding: 8px;
-            overflow-y: auto; 
-            display: grid;
-            /* Target ~200px cards to fit 5 in space of 4 */
-            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-            grid-auto-rows: 200px; 
-            gap: 8px;
+            overflow: hidden;
         }
-
-        /* --- CHARACTER CARD --- */
-        .char-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px);
-            border-radius: 2px;
+        .view-container.active {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+        }
+
+        /* --- DASHBOARD GRID (FLEET) --- */
+        #dashboard-fleet {
+            flex-grow: 1; padding: 8px; overflow-y: auto; 
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+            grid-auto-rows: 200px; gap: 8px;
+        }
+
+        /* --- DASHBOARD GRID (CHAT) --- */
+        #dashboard-chat {
+            flex-grow: 1; padding: 8px; overflow-y: auto;
+            display: grid;
+            /* WIDENED to 600px min width for better reading */
+            grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); 
+            grid-auto-rows: 350px; gap: 8px;
+        }
+
+        /* --- CHARACTER CARD (COMMON) --- */
+        .char-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px); border-radius: 2px;
+            display: flex; flex-direction: column; overflow: hidden;
             transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
-            position: relative;
-            cursor: pointer; 
-            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            position: relative; cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.2);
         }
-
-        .char-card:hover {
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-        }
-
+        .char-card:hover { border-color: rgba(255,255,255,0.3); box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
         .char-card:active { transform: scale(0.99); }
+        .char-card.dragging { opacity: 0.6; border: 1px dashed #666; transform: scale(0.95); }
         
-        .char-card.dragging { 
-            opacity: 0.6; 
-            border: 1px dashed #666; 
-            transform: scale(0.95);
-        }
-
-        /* Focus Flash Animation */
+        /* Animation Classes */
         @keyframes focusPulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); border-color: #fff; }
             70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); border-color: var(--accent-blue); }
@@ -176,7 +183,6 @@
         }
         .char-card.focus-flash { animation: focusPulse 0.4s ease-out; }
 
-        /* Damage Animation */
         @keyframes damagePulse {
             0%, 100% { border-color: var(--col-incoming-border); background: var(--card-bg); }
             50% { border-color: #ff0000; background: rgba(50, 0, 0, 0.8); }
@@ -186,163 +192,87 @@
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
 
-        /* Card Header */
+        /* Header */
         .card-header {
-            background: var(--card-header-bg);
-            padding: 4px 8px;
-            height: 28px; 
+            background: var(--card-header-bg); padding: 4px 8px; height: 28px; 
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-            flex-shrink: 0;
+            display: flex; justify-content: space-between; align-items: center;
+            user-select: none; flex-shrink: 0;
         }
 
-        .header-left-info {
-            display: flex;
-            gap: 6px;
-            align-items: baseline;
-            overflow: hidden;
-            max-width: 65%; /* Ensure name doesn't push stats off */
-        }
-
+        .header-left-info { display: flex; gap: 6px; align-items: baseline; overflow: hidden; max-width: 65%; }
         .char-name {
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 0.3px;
-            pointer-events: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.3px;
+            pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        .header-right-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: center;
-            line-height: 1;
-            min-width: 35%;
-        }
-
-        .efficiency-stat {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: #555; 
-        }
+        /* Header Right Logic */
+        .header-right-group { display: flex; align-items: center; gap: 6px; min-width: 35%; justify-content: flex-end; }
         
+        .header-right-info { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; line-height: 1; }
+        .efficiency-stat { font-size: 0.65rem; font-weight: 700; color: #555; }
         .eff-high { color: #00ffaa; text-shadow: 0 0 3px rgba(0, 255, 170, 0.3); }
         .eff-med { color: #ffcc00; }
         .eff-low { color: #888; }
+        .last-active { font-family: 'Consolas', monospace; font-size: 0.55rem; color: #555; margin-top: 2px; pointer-events: none; }
 
-        .last-active {
-            font-family: 'Consolas', monospace;
-            font-size: 0.55rem;
-            color: #555;
-            margin-top: 2px;
-            pointer-events: none;
+        .btn-close {
+            background: transparent; border: none; color: #666;
+            font-size: 1.2rem; line-height: 1; cursor: pointer;
+            padding: 0; margin-left: 4px; transition: color 0.2s;
+            font-weight: 400;
         }
+        .btn-close:hover { color: #ff4444; }
 
-        /* --- SECTIONS --- */
-        .log-section {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(0,0,0,0.5);
-            pointer-events: none; 
-            position: relative;
-        }
-
+        /* Log Sections */
+        .log-section { display: flex; flex-direction: column; overflow: hidden; border-bottom: 1px solid rgba(0,0,0,0.5); pointer-events: none; position: relative; }
         .section-header {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            padding: 1px 6px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            user-select: none;
-            display: flex;
-            justify-content: space-between;
-            height: 16px;
-            line-height: 16px;
-            flex-shrink: 0;
-            background: rgba(0,0,0,0.3);
+            font-size: 0.6rem; text-transform: uppercase; padding: 1px 6px; font-weight: 700;
+            letter-spacing: 0.5px; user-select: none; display: flex; justify-content: space-between;
+            height: 16px; line-height: 16px; flex-shrink: 0; background: rgba(0,0,0,0.3);
         }
-
-        /* Section Styles */
-        .section-incoming {
-            background: linear-gradient(to bottom, var(--col-incoming), transparent);
-        }
+        .section-incoming { background: linear-gradient(to bottom, var(--col-incoming), transparent); }
         .section-incoming .section-header { color: #ff6b6b; border-left: 2px solid #ff4444; }
-
-        .section-outgoing {
-            background: linear-gradient(to bottom, var(--col-outgoing), transparent);
-        }
+        .section-outgoing { background: linear-gradient(to bottom, var(--col-outgoing), transparent); }
         .section-outgoing .section-header { color: #4cd137; border-left: 2px solid #00ffaa; }
-
-        .section-misc {
-            background: linear-gradient(to bottom, var(--col-misc), transparent);
-            border-bottom: none;
-        }
+        .section-misc { background: linear-gradient(to bottom, var(--col-misc), transparent); border-bottom: none; }
         .section-misc .section-header { color: #4faaff; border-left: 2px solid #4488ff; }
 
-        /* --- LOG CONTENT --- */
+        /* Log Content */
         .log-content {
-            /* Fixed height for exactly 2 lines */
-            height: 36px; 
-            overflow-y: auto; 
-            padding: 2px 6px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 11px; /* Compact font */
-            display: block; 
-            pointer-events: auto; 
-            line-height: 1.5; 
-            color: #bbb;
-        }
-
-        /* Log Entries */
-        .log-entry {
-            display: flex;
-            align-items: baseline;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            white-space: nowrap; 
-            overflow: hidden;
+            height: 36px; overflow-y: auto; padding: 2px 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 11px;
+            display: block; pointer-events: auto; line-height: 1.5; color: #bbb;
         }
         
-        .log-entry:hover {
-            background: rgba(255,255,255,0.05);
+        /* CHAT SPECIFIC */
+        .chat-content {
+            flex-grow: 1; overflow-y: auto; padding: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 11px;
+            display: flex; flex-direction: column; gap: 2px;
         }
 
-        .timestamp {
-            color: #555;
-            margin-right: 6px;
-            font-size: 0.6rem;
-            flex-shrink: 0;
-            min-width: 36px; /* Reduced from 42px */
-        }
+        .log-entry { display: flex; align-items: baseline; border-bottom: 1px solid rgba(255,255,255,0.02); white-space: nowrap; overflow: hidden; }
+        .log-entry:hover { background: rgba(255,255,255,0.05); }
+        .chat-entry { display: flex; align-items: flex-start; gap: 6px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.02); line-height: 1.4; }
+
+        .timestamp { color: #555; margin-right: 6px; font-size: 0.6rem; flex-shrink: 0; min-width: 36px; }
+        .msg-text { overflow: hidden; text-overflow: ellipsis; }
         
-        .msg-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .chat-sender { color: #00ff88; font-weight: 600; white-space: nowrap; }
+        .chat-message { color: #ddd; white-space: pre-wrap; word-break: break-word; }
+        .chat-system { color: #888; font-style: italic; }
 
-        /* Highlight Colors */
         .text-dmg-in { color: #ff8888; }
         .text-dmg-out { color: #88ffaa; }
         .text-misc { color: #99a; }
         .text-warp { color: var(--warp-color); font-style: italic; }
-        
-        /* Bold numbers styling */
         b { color: #fff; font-weight: 600; }
 
-        /* Scrollbar Styling - very subtle */
         ::-webkit-scrollbar { width: 3px; height: 3px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
-
     </style>
 </head>
 <body>
@@ -354,32 +284,84 @@
                 <div class="status-dot" id="status-dot"></div>
                 <span id="status-text">Connecting...</span>
             </div>
+            <!-- AGRO DISPLAY -->
+            <div id="agro-display"></div>
         </div>
-        <button class="btn-save" onclick="saveLayout()">Save Layout</button>
+        <div class="header-right">
+            <button class="btn-header" onclick="resetHidden()">Reset Chars</button>
+            <button class="btn-header" onclick="resetHiddenChannels()">Reset Channels</button>
+            <button class="btn-header" onclick="promptLogPath()">Change Logs</button>
+            <button class="btn-header btn-save" onclick="saveLayout()">Save Layout</button>
+        </div>
     </header>
 
-    <div id="dashboard">
-        <!-- Character cards will be injected here -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('fleet')">Fleet Monitor</button>
+        <button class="tab-btn" onclick="switchTab('chat')">Chat Monitor</button>
+    </div>
+
+    <div id="view-fleet" class="view-container active">
+        <div id="dashboard-fleet"></div>
+    </div>
+
+    <div id="view-chat" class="view-container">
+        <div id="dashboard-chat"></div>
     </div>
 
     <script>
-        const dashboard = document.getElementById('dashboard');
+        const dashboardFleet = document.getElementById('dashboard-fleet');
+        const dashboardChat = document.getElementById('dashboard-chat');
         const statusText = document.getElementById('status-text');
         const statusDot = document.getElementById('status-dot');
+        const agroDisplay = document.getElementById('agro-display');
         
         // State tracking
-        const charCards = {}; 
-        const charDamageStats = {}; 
+        let charCards = {}; 
+        let chatCards = {}; 
+        let chatHistory = {}; 
+        let charDamageStats = {}; 
         let maxFleetDamage = 0; 
+        
+        // Active Agro List
+        let recentAgroList = [];
+        
+        // Hidden characters State
+        let hiddenCharacters = new Set();
+        try {
+            const stored = JSON.parse(localStorage.getItem('eve-hidden-chars'));
+            if (Array.isArray(stored)) hiddenCharacters = new Set(stored);
+        } catch(e) {}
+
+        // Hidden Channels State
+        let hiddenChannels = new Set();
+        try {
+            const stored = JSON.parse(localStorage.getItem('eve-hidden-channels'));
+            if (Array.isArray(stored)) hiddenChannels = new Set(stored);
+        } catch(e) {}
         
         let ws;
 
         // Load saved order
         let savedOrder = [];
-        try {
-            savedOrder = JSON.parse(localStorage.getItem('eve-layout')) || [];
-        } catch (e) {
-            console.error("Could not load layout", e);
+        try { savedOrder = JSON.parse(localStorage.getItem('eve-layout')) || []; } catch (e) {}
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+            
+            if (tab === 'fleet') {
+                document.querySelector('.tab-btn:first-child').classList.add('active');
+                document.getElementById('view-fleet').classList.add('active');
+            } else {
+                document.querySelector('.tab-btn:last-child').classList.add('active');
+                document.getElementById('view-chat').classList.add('active');
+                
+                setTimeout(() => {
+                    document.querySelectorAll('#dashboard-chat .chat-content').forEach(el => {
+                        el.scrollTop = el.scrollHeight;
+                    });
+                }, 50);
+            }
         }
 
         function connect() {
@@ -403,16 +385,218 @@
             ws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
                 if (message.type === 'ping') return; 
-                if (message.type === 'update') handleLogUpdate(message);
+                if (message.type === 'info') console.log('[SERVER INFO]', message.message);
+                if (message.type === 'error') alert('Server Error: ' + message.message);
+                if (message.type === 'config-success') alert('Log directory updated to: ' + message.path);
+                if (message.type === 'reset') handleReset();
+                
+                if (message.type === 'update') {
+                    if (message.kind === 'chat') handleChatUpdate(message);
+                    else handleGameUpdate(message);
+                }
             };
         }
 
-        function handleLogUpdate(payload) {
-            const { character, data } = payload;
+        function promptLogPath() {
+            const currentPath = localStorage.getItem('eve-log-path') || '';
+            const newPath = prompt("Enter full path to EVE logs folder (parent of Gamelogs/Chatlogs):", currentPath);
+            if (newPath && newPath.trim() !== "") {
+                const cleanPath = newPath.replace(/"/g, '').trim();
+                if(ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'set-path', path: cleanPath }));
+                    localStorage.setItem('eve-log-path', cleanPath);
+                } else { alert("Not connected."); }
+            }
+        }
+
+        function handleReset() {
+            dashboardFleet.innerHTML = '';
+            dashboardChat.innerHTML = '';
+            charCards = {};
+            chatCards = {};
+            chatHistory = {};
+            charDamageStats = {};
+            maxFleetDamage = 0;
+            recentAgroList = [];
+            renderAgro();
+        }
+
+        function hideCharacter(charName) {
+            if(confirm(`Hide ${charName} from the monitor?`)) {
+                hiddenCharacters.add(charName);
+                const card = charCards[charName];
+                if(card) {
+                    card.remove();
+                    delete charCards[charName];
+                }
+            }
+        }
+
+        function hideChannel(channelName) {
+            if(confirm(`Hide channel '${channelName}' from the monitor?`)) {
+                hiddenChannels.add(channelName);
+                const cardId = `chat-${channelName}`;
+                const card = chatCards[cardId];
+                if(card) {
+                    card.remove();
+                    delete chatCards[cardId];
+                }
+            }
+        }
+
+        function resetHidden() {
+            if(confirm("Unhide all CHARACTERS and refresh page?")) {
+                hiddenCharacters.clear();
+                localStorage.removeItem('eve-hidden-chars');
+                window.location.reload();
+            }
+        }
+
+        function resetHiddenChannels() {
+            if(confirm("Unhide all CHAT CHANNELS and refresh page?")) {
+                hiddenChannels.clear();
+                localStorage.removeItem('eve-hidden-channels');
+                window.location.reload();
+            }
+        }
+
+        // --- AGRO DISPLAY LOGIC ---
+        function updateRecentAgro(name) {
+            // Filter out name if it exists (to move it to top)
+            recentAgroList = recentAgroList.filter(n => n !== name);
+            // Add to front
+            recentAgroList.unshift(name);
+            // Limit to 2
+            if (recentAgroList.length > 2) recentAgroList.pop();
+            renderAgro();
+        }
+
+        function renderAgro() {
+            agroDisplay.innerHTML = '';
+            recentAgroList.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'agro-name';
+                div.textContent = name;
+                agroDisplay.appendChild(div);
+            });
+        }
+
+        // --- CHAT LOGIC ---
+
+        function handleChatUpdate(payload) {
+            const { character, channelName, data } = payload;
+            if (!channelName) return; 
             
+            // Check if channel is hidden
+            if (hiddenChannels.has(channelName)) return;
+
+            const cardId = `chat-${channelName}`;
+            if (!chatCards[cardId]) createChatCard(channelName, cardId);
+            if (!chatHistory[channelName]) chatHistory[channelName] = new Set();
+
+            const card = chatCards[cardId];
+            const container = card.querySelector('.chat-content');
+            const lines = data.split(/\r?\n/);
+            
+            let lastTime = '';
+
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                const chatMatch = line.match(/\[\s*(.*?)\s*\]\s*(.*?) > (.*)/);
+                const systemMatch = !chatMatch ? line.match(/\[\s*(.*?)\s*\]\s*(.*)/) : null;
+
+                if (chatMatch) {
+                    const timeStr = chatMatch[1].split(' ')[1] || chatMatch[1];
+                    const sender = chatMatch[2];
+                    const message = chatMatch[3];
+                    addChatLine(channelName, timeStr, sender, message, 'chat-message', container);
+                    lastTime = timeStr;
+                } 
+                else if (systemMatch) {
+                    const timeStr = systemMatch[1].split(' ')[1] || systemMatch[1];
+                    const message = systemMatch[2];
+                    addChatLine(channelName, timeStr, "", message, 'chat-system', container);
+                    lastTime = timeStr;
+                }
+            });
+
+            if (container.children.length > 100) {
+                container.removeChild(container.firstChild);
+            }
+            
+            requestAnimationFrame(() => {
+                container.scrollTop = container.scrollHeight;
+            });
+            
+            if (lastTime) {
+                card.querySelector('.last-active').textContent = lastTime;
+            }
+        }
+
+        function addChatLine(channelName, time, sender, message, cssClass, container) {
+            const signature = `${time}|${sender}|${message}`;
+            if (chatHistory[channelName].has(signature)) return;
+            
+            chatHistory[channelName].add(signature);
+            if (chatHistory[channelName].size > 500) {
+                const first = chatHistory[channelName].values().next().value;
+                chatHistory[channelName].delete(first);
+            }
+
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'chat-entry';
+            const senderHtml = sender ? `<span class="chat-sender">${sender}</span>` : '';
+            entryDiv.innerHTML = `
+                <span class="timestamp">${time}</span>
+                ${senderHtml}
+                <span class="chat-message ${cssClass}">${message}</span>
+            `;
+            container.appendChild(entryDiv);
+        }
+
+        function createChatCard(channelName, id) {
+            const card = document.createElement('div');
+            card.className = 'char-card';
+            card.style.height = '100%'; 
+            const header = document.createElement('div');
+            header.className = 'card-header';
+            header.style.background = 'rgba(0, 50, 100, 0.8)'; 
+            const leftInfo = document.createElement('div');
+            leftInfo.className = 'header-left-info';
+            leftInfo.innerHTML = `<span class="char-name">${channelName}</span>`;
+            const rightGroup = document.createElement('div');
+            rightGroup.className = 'header-right-group';
+            const rightInfo = document.createElement('div');
+            rightInfo.className = 'header-right-info';
+            rightInfo.innerHTML = `<span class="last-active">Active</span>`;
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '&times;'; 
+            closeBtn.className = 'btn-close';
+            closeBtn.title = 'Hide Channel';
+            closeBtn.onclick = (e) => {
+                e.stopPropagation(); 
+                hideChannel(channelName);
+            };
+            rightGroup.appendChild(rightInfo);
+            rightGroup.appendChild(closeBtn);
+            header.appendChild(leftInfo);
+            header.appendChild(rightGroup);
+            const content = document.createElement('div');
+            content.className = 'chat-content';
+            card.appendChild(header);
+            card.appendChild(content);
+            dashboardChat.appendChild(card);
+            chatCards[id] = card;
+        }
+
+        // --- GAME LOGIC ---
+
+        function handleGameUpdate(payload) {
+            const { character, data } = payload;
+            if (hiddenCharacters.has(character)) return;
+
             if (!charCards[character]) {
                 createCharCard(character);
-                // Init damage stat if new
                 if (!charDamageStats[character]) charDamageStats[character] = 0;
             }
 
@@ -427,12 +611,11 @@
                 let rawMsg = line;
                 const timestampMatch = line.match(/^\[\s*\d{4}\.\d{2}\.\d{2}\s+(.*?)\s*\](.*)/);
                 if (timestampMatch) {
-                    timeStr = timestampMatch[1].split('.')[0]; // HH:mm:ss
+                    timeStr = timestampMatch[1].split('.')[0];
                     rawMsg = timestampMatch[2];
                 }
 
                 const isCombatTag = rawMsg.includes('(combat)');
-                
                 let cleanMsg = rawMsg
                     .replace(/<[^>]+>/g, '')
                     .replace(/^\s*\(combat\)\s*/, '')
@@ -440,99 +623,94 @@
                     .trim();
 
                 const lower = cleanMsg.toLowerCase();
-                
-                const isRepairOrCap = lower.includes('repair') || 
-                                      lower.includes('transfer') || 
-                                      lower.includes('aid') || 
-                                      lower.includes('drain') || 
-                                      lower.includes('added') || 
-                                      lower.includes('capacity') || 
-                                      lower.includes('capacitor') || 
-                                      lower.includes('energy') || 
-                                      lower.includes('gj') || 
-                                      lower.includes('remote') || 
-                                      lower.includes('neutraliz');
+                const isRepairOrCap = lower.includes('repair') || lower.includes('transfer') || lower.includes('aid') || lower.includes('drain') || lower.includes('added') || lower.includes('capacity') || lower.includes('capacitor') || lower.includes('energy') || lower.includes('gj') || lower.includes('remote') || lower.includes('neutraliz');
 
                 let targetSection = 'misc';
                 let textClass = 'text-misc';
 
                 if (isCombatTag && !isRepairOrCap) {
                     if (/\bfrom\b/.test(cleanMsg)) {
-                        targetSection = 'incoming';
-                        textClass = 'text-dmg-in';
-                        triggerDamageAlert(card);
+                        
+                        // --- TARGET EXTRACTION ---
+                        let targetName = "Unknown";
+                        // Capture: "... to (TargetName)" ignoring trailing punctuation like ! or .
+                        const targetMatch = cleanMsg.match(/ to (.*?)(?:[!.?]|$)/); 
+                        if (targetMatch) {
+                            targetName = targetMatch[1].trim();
+                        }
+
+                        // --- AGRO HEADER LOGIC ---
+                        // Update list if tackle keywords are found
+                        if (cleanMsg.toLowerCase().includes('scramble') || cleanMsg.toLowerCase().includes('disrupt')) {
+                            let displayName = targetName;
+                            if (displayName.toLowerCase() === 'you') displayName = character; // Use monitored char if "You"
+                            updateRecentAgro(displayName);
+                        }
+
+                        // --- FLASH LOGIC (Only if attacked ME) ---
+                        let isDirectedAtMe = true;
+                        const charNameLower = character.toLowerCase();
+                        const targetNameLower = targetName.toLowerCase();
+
+                        // If the extracted name isn't "you" AND doesn't contain my character name
+                        if (targetNameLower !== 'you' && !targetNameLower.includes(charNameLower)) {
+                            isDirectedAtMe = false;
+                        }
+
+                        if (isDirectedAtMe) {
+                            targetSection = 'incoming';
+                            textClass = 'text-dmg-in';
+                            triggerDamageAlert(card);
+                        } else {
+                            targetSection = 'misc';
+                            textClass = 'text-misc';
+                        }
+
                     } else if (/\bto\b/.test(cleanMsg)) {
                         targetSection = 'outgoing';
                         textClass = 'text-dmg-out';
-                        
-                        // --- DAMAGE TRACKING Logic ---
                         const dmgMatch = cleanMsg.match(/^(\d+)/);
                         if (dmgMatch) {
                             const dmgAmount = parseInt(dmgMatch[1], 10);
                             charDamageStats[character] = (charDamageStats[character] || 0) + dmgAmount;
-                            
-                            if (charDamageStats[character] > maxFleetDamage) {
-                                maxFleetDamage = charDamageStats[character];
-                            }
+                            if (charDamageStats[character] > maxFleetDamage) maxFleetDamage = charDamageStats[character];
                             damageUpdated = true;
                         }
                     }
                 } else {
-                    if (cleanMsg.includes('Warping') || cleanMsg.includes('Jumping')) {
-                        textClass = 'text-warp';
-                    }
+                    if (cleanMsg.includes('Warping') || cleanMsg.includes('Jumping')) textClass = 'text-warp';
                 }
 
                 const container = card.querySelector(`.section-${targetSection} .log-content`);
-                
                 const entryDiv = document.createElement('div');
                 entryDiv.className = 'log-entry';
                 entryDiv.title = cleanMsg; 
-
                 const timeSpan = document.createElement('span');
                 timeSpan.className = 'timestamp';
                 timeSpan.textContent = timeStr;
-
                 const msgSpan = document.createElement('span');
                 msgSpan.className = `msg-text ${textClass}`;
-
-                // Bold numbers
-                if (/\d+/.test(cleanMsg)) {
-                    msgSpan.innerHTML = cleanMsg.replace(/(\d+)/g, '<b>$1</b>');
-                } else {
-                    msgSpan.textContent = cleanMsg;
-                }
-
+                if (/\d+/.test(cleanMsg)) msgSpan.innerHTML = cleanMsg.replace(/(\d+)/g, '<b>$1</b>');
+                else msgSpan.textContent = cleanMsg;
                 entryDiv.appendChild(timeSpan);
                 entryDiv.appendChild(msgSpan);
-
                 container.appendChild(entryDiv);
-
-                if (container.children.length > 40) {
-                    container.removeChild(container.firstChild);
-                }
+                if (container.children.length > 40) container.removeChild(container.firstChild);
                 container.scrollTop = container.scrollHeight;
-
                 card.querySelector('.last-active').textContent = timeStr;
             });
 
-            if (damageUpdated) {
-                updateEfficiencyDisplay();
-            }
+            if (damageUpdated) updateEfficiencyDisplay();
         }
 
         function updateEfficiencyDisplay() {
             if (maxFleetDamage === 0) return;
-
             Object.keys(charCards).forEach(charName => {
                 const card = charCards[charName];
                 const myDamage = charDamageStats[charName] || 0;
                 const effElem = card.querySelector('.efficiency-stat');
-                
                 const percent = Math.round((myDamage / maxFleetDamage) * 100);
-                
                 effElem.textContent = `EFF: ${percent}%`;
-                
                 effElem.className = 'efficiency-stat'; 
                 if (percent >= 95) effElem.classList.add('eff-high');
                 else if (percent >= 50) effElem.classList.add('eff-med');
@@ -545,9 +723,7 @@
             card.className = 'char-card';
             card.setAttribute('data-char', charName);
             card.setAttribute('draggable', 'true');
-            
             addDragEvents(card);
-
             card.onclick = (e) => {
                 const selection = window.getSelection();
                 if (selection.toString().length > 0) return;
@@ -555,71 +731,60 @@
                 setTimeout(() => card.classList.remove('focus-flash'), 400);
                 focusClient(charName);
             };
-
-            // Header Structure
             const header = document.createElement('div');
             header.className = 'card-header';
-            
             const leftInfo = document.createElement('div');
             leftInfo.className = 'header-left-info';
-
             const nameSpan = document.createElement('span');
             nameSpan.className = 'char-name';
             nameSpan.textContent = charName;
             nameSpan.style.color = stringToColor(charName);
-            
             leftInfo.appendChild(nameSpan);
-
+            const rightGroup = document.createElement('div');
+            rightGroup.className = 'header-right-group';
             const rightInfo = document.createElement('div');
             rightInfo.className = 'header-right-info';
-
-            // New Efficiency Stat
             const effSpan = document.createElement('span');
             effSpan.className = 'efficiency-stat';
             effSpan.textContent = 'EFF: 0%';
-
             const activeSpan = document.createElement('span');
             activeSpan.className = 'last-active';
             activeSpan.textContent = '--:--:--';
-
             rightInfo.appendChild(effSpan);
             rightInfo.appendChild(activeSpan);
-
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '&times;'; 
+            closeBtn.className = 'btn-close';
+            closeBtn.title = 'Hide Character';
+            closeBtn.onclick = (e) => {
+                e.stopPropagation(); 
+                hideCharacter(charName);
+            };
+            rightGroup.appendChild(rightInfo);
+            rightGroup.appendChild(closeBtn);
             header.appendChild(leftInfo);
-            header.appendChild(rightInfo);
-
-            const incoming = createSection('Incoming', 'incoming');
-            const outgoing = createSection('Outgoing', 'outgoing');
-            const misc = createSection('Logistics & Events', 'misc');
-
+            header.appendChild(rightGroup);
             card.appendChild(header);
-            card.appendChild(incoming);
-            card.appendChild(outgoing);
-            card.appendChild(misc);
-
-            dashboard.appendChild(card);
+            card.appendChild(createSection('Incoming', 'incoming'));
+            card.appendChild(createSection('Outgoing', 'outgoing'));
+            card.appendChild(createSection('Logistics & Events', 'misc'));
+            dashboardFleet.appendChild(card);
             charCards[charName] = card;
-
             reorderCards();
         }
 
         function focusClient(charName) {
-            if(ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'focus', character: charName }));
-            }
+            if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'focus', character: charName }));
         }
 
         function createSection(title, type) {
             const section = document.createElement('div');
             section.className = `log-section section-${type}`;
-
             const header = document.createElement('div');
             header.className = 'section-header';
             header.textContent = title;
-
             const content = document.createElement('div');
             content.className = 'log-content';
-
             section.appendChild(header);
             section.appendChild(content);
             return section;
@@ -637,28 +802,22 @@
 
         function stringToColor(str) {
             let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
+            for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
             const h = hash % 360;
             return `hsl(${h}, 70%, 70%)`; 
         }
 
-        // --- DRAG AND DROP ---
         function addDragEvents(card) {
             card.addEventListener('dragstart', () => card.classList.add('dragging'));
             card.addEventListener('dragend', () => card.classList.remove('dragging'));
         }
 
-        dashboard.addEventListener('dragover', e => {
+        dashboardFleet.addEventListener('dragover', e => {
             e.preventDefault();
-            const afterElement = getDragAfterElement(dashboard, e.clientX, e.clientY);
+            const afterElement = getDragAfterElement(dashboardFleet, e.clientX, e.clientY);
             const draggable = document.querySelector('.dragging');
-            if (afterElement == null) {
-                dashboard.appendChild(draggable);
-            } else {
-                dashboard.insertBefore(draggable, afterElement);
-            }
+            if (afterElement == null) dashboardFleet.appendChild(draggable);
+            else dashboardFleet.insertBefore(draggable, afterElement);
         });
 
         function getDragAfterElement(container, x, y) {
@@ -666,25 +825,22 @@
             return draggableElements.reduce((closest, child) => {
                 const box = child.getBoundingClientRect();
                 if (x < box.right && y < box.bottom && x > box.left && y > box.top) {
-                     if (x < box.left + box.width / 2) {
-                         return { offset: 0, element: child };
-                     } else {
-                         return { offset: 0, element: child.nextElementSibling };
-                     }
+                     if (x < box.left + box.width / 2) return { offset: 0, element: child };
+                     else return { offset: 0, element: child.nextElementSibling };
                 }
                 return closest;
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
 
-        // --- LAYOUT ---
         function saveLayout() {
-            const currentOrder = [...document.querySelectorAll('.char-card')]
+            const currentOrder = [...document.querySelectorAll('#dashboard-fleet .char-card')]
                 .map(card => card.getAttribute('data-char'));
             localStorage.setItem('eve-layout', JSON.stringify(currentOrder));
-            
+            localStorage.setItem('eve-hidden-chars', JSON.stringify([...hiddenCharacters]));
+            localStorage.setItem('eve-hidden-channels', JSON.stringify([...hiddenChannels]));
             const btn = document.querySelector('.btn-save');
             const originalText = btn.textContent;
-            btn.textContent = "Layout Saved";
+            btn.textContent = "Settings Saved";
             btn.style.borderColor = "#00ff88";
             btn.style.color = "#00ff88";
             setTimeout(() => {
@@ -696,13 +852,13 @@
 
         function reorderCards() {
             if (!savedOrder || savedOrder.length === 0) return;
-            const currentCards = Array.from(document.querySelectorAll('.char-card'));
+            const currentCards = Array.from(document.querySelectorAll('#dashboard-fleet .char-card'));
             currentCards.sort((a, b) => {
                 const indexA = savedOrder.indexOf(a.getAttribute('data-char'));
                 const indexB = savedOrder.indexOf(b.getAttribute('data-char'));
                 return (indexA === -1 ? 9999 : indexA) - (indexB === -1 ? 9999 : indexB);
             });
-            currentCards.forEach(card => dashboard.appendChild(card));
+            currentCards.forEach(card => dashboardFleet.appendChild(card));
         }
 
         connect();

@@ -9,25 +9,21 @@ const { spawn } = require('child_process');
 
 // --- CONFIGURATION ---
 
-// [OPTIONAL] MANUAL PATH OVERRIDE
-const MANUAL_LOG_DIR = 'D:\\Files\\Documents\\EVE\\logs\\Gamelogs';
-
-// Auto-detect commonly used EVE log paths
+// Default Auto-detect paths (Targeting the PARENT 'logs' folder now)
 const homeDir = os.homedir();
 const possiblePaths = [
-    path.join(homeDir, 'Documents', 'EVE', 'logs', 'Gamelogs'),
-    path.join(homeDir, 'OneDrive', 'Documents', 'EVE', 'logs', 'Gamelogs')
+    path.join(homeDir, 'Documents', 'EVE', 'logs'),
+    path.join(homeDir, 'OneDrive', 'Documents', 'EVE', 'logs')
 ];
 
-const LOG_DIR = MANUAL_LOG_DIR || possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
+// Initial setup
+let LOG_DIR = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
 
-const ENCODING = 'utf8';
 const PORT = 3000;
-const MAX_FILE_AGE = 24 * 60 * 60 * 1000;
+const MAX_FILE_AGE = 24 * 60 * 60 * 1000; // 24 hours
 
-// Tuning for initial load
-const INITIAL_LINE_COUNT = 100;      // Only show this many lines on startup
-const INITIAL_READ_BUFFER = 50 * 1024; // Read last 50KB to find those lines (safe for memory)
+const INITIAL_LINE_COUNT = 100;
+const INITIAL_READ_BUFFER = 50 * 1024;
 
 // --- SERVER SETUP ---
 
@@ -39,8 +35,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- STATE MANAGEMENT ---
 
-const activeFiles = new Map();
+let activeFiles = new Map();
 const clients = new Set();
+let watcher = null;
 
 // --- LOGIC ---
 
@@ -53,24 +50,15 @@ function broadcast(data) {
     }
 }
 
-/**
- * Attempts to bring the specific EVE window to the foreground using Windows API.
- * Uses 'AttachThreadInput' to bypass Windows foreground lock (flashing taskbar issue).
- */
 function focusClientWindow(characterName) {
     if (!characterName) return;
-
-    // Sanitize
     const cleanName = characterName.replace(/[^a-zA-Z0-9 \-_]/g, "");
-
     console.log(`[FOCUS] Request received for: "${cleanName}"`);
 
-    // PowerShell Script
     const psScript = `
 $ProgressPreference = 'SilentlyContinue'
 $name = "${cleanName}"
 $titlePattern = "*$name*"
-
 $code = @'
 [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -80,111 +68,65 @@ $code = @'
 [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
 '@
-
-try {
-    $type = Add-Type -MemberDefinition $code -Name Win32FocusHack -Namespace Win32Functions -PassThru
-} catch {
-    $type = [Win32Functions.Win32FocusHack]
-}
-
+try { $type = Add-Type -MemberDefinition $code -Name Win32FocusHack -Namespace Win32Functions -PassThru } catch { $type = [Win32Functions.Win32FocusHack] }
 $proc = Get-Process | Where-Object { $_.MainWindowTitle -like $titlePattern } | Select-Object -First 1
-
 if ($proc) {
-    Write-Output "FOUND: '$($proc.MainWindowTitle)' (PID: $($proc.Id))"
     $hWnd = $proc.MainWindowHandle
-
-    # Get the thread of the window that currently has focus
     $foregroundHWnd = $type::GetForegroundWindow()
     $foregroundThreadID = $type::GetWindowThreadProcessId($foregroundHWnd, [IntPtr]::Zero)
-    
-    # Get our own thread ID
     $currentThreadID = $type::GetCurrentThreadId()
-
-    # Attach our input processing to the foreground window's thread
-    if ($foregroundThreadID -ne $currentThreadID) {
-        $type::AttachThreadInput($currentThreadID, $foregroundThreadID, $true) | Out-Null
-    }
-
-    # Force the window to the front
+    if ($foregroundThreadID -ne $currentThreadID) { $type::AttachThreadInput($currentThreadID, $foregroundThreadID, $true) | Out-Null }
     $type::BringWindowToTop($hWnd) | Out-Null
-    $type::ShowWindowAsync($hWnd, 9) | Out-Null # 9 = SW_RESTORE
+    $type::ShowWindowAsync($hWnd, 9) | Out-Null 
     $type::SetForegroundWindow($hWnd) | Out-Null
-
-    # Detach
-    if ($foregroundThreadID -ne $currentThreadID) {
-        $type::AttachThreadInput($currentThreadID, $foregroundThreadID, $false) | Out-Null
-    }
-    
-    Write-Output "Focus command executed with input attachment."
-} else {
-    Write-Output "ERROR: No window found matching '$titlePattern'"
-    $eveProcs = Get-Process | Where-Object { $_.ProcessName -eq "exefile" } 
-    if ($eveProcs) {
-        Write-Output "Visible EVE Clients:"
-        foreach ($p in $eveProcs) {
-            Write-Output " - '$($p.MainWindowTitle)'"
-        }
-    } else {
-        Write-Output "No EVE clients (exefile) detected running."
-    }
+    if ($foregroundThreadID -ne $currentThreadID) { $type::AttachThreadInput($currentThreadID, $foregroundThreadID, $false) | Out-Null }
 }
 `;
-
-    // Encode script to Base64 (UTF-16LE) for PowerShell -EncodedCommand
     const psScriptEncoded = Buffer.from(psScript, 'utf16le').toString('base64');
-
-    const child = spawn('powershell.exe', ["-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", psScriptEncoded]);
-
-    child.stdout.on('data', (data) => {
-        console.log(`[FOCUS LOG] ${data.toString().trim()}`);
-    });
-
-    child.stderr.on('data', (data) => {
-        const msg = data.toString().trim();
-        if (msg) console.error(`[FOCUS ERROR] ${msg}`);
-    });
-
-    child.on('error', (err) => {
-        console.error('[FOCUS FAILED] Spawn error:', err);
-    });
-
-    child.on('close', (code) => {
-        if (code !== 0) console.log(`[FOCUS] Exited with code ${code}`);
-    });
+    spawn('powershell.exe', ["-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", psScriptEncoded]);
 }
 
-async function identifyCharacter(filePath) {
+/**
+ * Reads the file header to extract Character Name, Channel Name AND Encoding
+ */
+async function parseLogHeader(filePath) {
     return new Promise((resolve) => {
-        const stream = fs.createReadStream(filePath, { start: 0, end: 2048, encoding: null });
+        const stream = fs.createReadStream(filePath, { start: 0, end: 4096, encoding: null });
         let buffer = Buffer.alloc(0);
 
         stream.on('data', chunk => buffer = Buffer.concat([buffer, chunk]));
         stream.on('end', () => {
             try {
-                const content = buffer.toString(ENCODING);
-                const match = content.match(/Listener:\s+(.*?)(\r|\n|$)/);
-
-                if (match && match[1]) {
-                    resolve(match[1].trim());
-                } else {
-                    if (buffer.length >= 2 && buffer[0] === 0xFF && buffer[1] === 0xFE) {
-                        const altContent = buffer.toString('utf16le');
-                        const altMatch = altContent.match(/Listener:\s+(.*?)(\r|\n|$)/);
-                        if (altMatch && altMatch[1]) return resolve(altMatch[1].trim());
-                    }
-                    resolve('Unknown');
+                // Detect Encoding
+                let encoding = 'utf8';
+                if (buffer.length >= 2 && buffer[0] === 0xFF && buffer[1] === 0xFE) {
+                    encoding = 'utf16le';
                 }
+
+                // Decode
+                let content = buffer.toString(encoding);
+
+                // Extract Listener (Character)
+                const listenerMatch = content.match(/Listener:\s+(.*?)(\r|\n|$)/);
+                const character = (listenerMatch && listenerMatch[1]) ? listenerMatch[1].trim() : 'Unknown';
+
+                // Extract Channel Name (Only present in Chat logs)
+                const channelMatch = content.match(/Channel Name:\s+(.*?)(\r|\n|$)/);
+                const channelName = (channelMatch && channelMatch[1]) ? channelMatch[1].trim() : null;
+
+                resolve({ character, channelName, encoding });
             } catch (err) {
-                resolve('Unknown');
+                resolve({ character: 'Unknown', channelName: null, encoding: 'utf8' });
             }
         });
-        stream.on('error', () => resolve('Unknown'));
+        stream.on('error', () => resolve({ character: 'Unknown', channelName: null, encoding: 'utf8' }));
     });
 }
 
-// Reads a specific chunk from a file and broadcasts it
-// Used for updates (small chunks) or initial tails
 function readContent(filePath, start, end) {
+    const fileData = activeFiles.get(filePath);
+    if (!fileData) return;
+
     const stream = fs.createReadStream(filePath, {
         start: start,
         end: end,
@@ -196,20 +138,19 @@ function readContent(filePath, start, end) {
 
     stream.on('end', () => {
         const buffer = Buffer.concat(bufferChunks);
-        let content = buffer.toString(ENCODING).replace(/^\uFEFF/, '');
+        // Use the correct encoding for this specific file
+        let content = buffer.toString(fileData.encoding).replace(/^\uFEFF/, '');
 
-        const fileData = activeFiles.get(filePath);
-        if (fileData) {
-            fileData.currentSize = end;
-
-            if (content.trim().length > 0) {
-                broadcast({
-                    type: 'update',
-                    character: fileData.character,
-                    filename: path.basename(filePath),
-                    data: content
-                });
-            }
+        fileData.currentSize = end;
+        if (content.trim().length > 0) {
+            broadcast({
+                type: 'update',
+                kind: fileData.kind,
+                character: fileData.character,
+                channelName: fileData.channelName,
+                filename: path.basename(filePath),
+                data: content
+            });
         }
     });
 }
@@ -220,11 +161,10 @@ function checkFileForUpdates(filePath) {
 
     fs.stat(filePath, (err, stats) => {
         if (err) return;
-
         if (stats.size > fileData.currentSize) {
             readContent(filePath, fileData.currentSize, stats.size);
         } else if (stats.size < fileData.currentSize) {
-            fileData.currentSize = 0; // File truncated/reset
+            fileData.currentSize = 0;
         }
     });
 }
@@ -232,26 +172,34 @@ function checkFileForUpdates(filePath) {
 async function addFileToWatch(filePath, stats) {
     if (activeFiles.has(filePath)) return;
 
+    // Check subdirectory to determine type
+    const isGamelog = filePath.includes('Gamelogs');
+    const isChatlog = filePath.includes('Chatlogs');
+
+    if (!isGamelog && !isChatlog) return; // Ignore other files in logs/ root
+
     const age = Date.now() - stats.mtimeMs;
     if (age > MAX_FILE_AGE) return;
 
-    const characterName = await identifyCharacter(filePath);
+    const { character, channelName, encoding } = await parseLogHeader(filePath);
 
-    // --- TAIL LOGIC ---
-    // Instead of reading the whole file, we jump to the end minus a safety buffer (50KB)
+    const kind = isChatlog ? 'chat' : 'game';
+
     let startPosition = Math.max(0, stats.size - INITIAL_READ_BUFFER);
-
-    // Align to 2 bytes if UTF-16LE (just in case we switch encoding later)
-    if (ENCODING === 'utf16le' && startPosition % 2 !== 0) startPosition++;
+    // Align start position to 2 bytes if UTF-16LE
+    if (encoding === 'utf16le' && startPosition % 2 !== 0) startPosition++;
 
     activeFiles.set(filePath, {
-        character: characterName,
-        currentSize: stats.size // Set currentSize to END so we don't re-read the tail later in checkFileForUpdates
+        character,
+        channelName,
+        kind,
+        currentSize: stats.size,
+        encoding
     });
 
-    console.log(`[WATCHING] ${characterName} (${path.basename(filePath)})`);
+    const label = kind === 'chat' ? `[CHAT: ${channelName}]` : `[GAME]`;
+    console.log(`[WATCHING] ${label} ${character} (${path.basename(filePath)}) [${encoding}]`);
 
-    // Manually read the tail, trim it to 100 lines, and broadcast
     if (stats.size > 0) {
         const stream = fs.createReadStream(filePath, {
             start: startPosition,
@@ -263,19 +211,18 @@ async function addFileToWatch(filePath, stats) {
         stream.on('data', chunk => bufferChunks.push(chunk));
         stream.on('end', () => {
             const buffer = Buffer.concat(bufferChunks);
-            let content = buffer.toString(ENCODING).replace(/^\uFEFF/, '');
-
-            // Split into lines
+            // Use detected encoding
+            let content = buffer.toString(encoding).replace(/^\uFEFF/, '');
             const lines = content.split(/\r?\n/);
-
-            // Slice the last N lines
             const recentLines = lines.slice(-INITIAL_LINE_COUNT);
             const cleanContent = recentLines.join('\n');
 
             if (cleanContent.trim().length > 0) {
                 broadcast({
                     type: 'update',
-                    character: characterName,
+                    kind: kind,
+                    character: character,
+                    channelName: channelName,
                     filename: path.basename(filePath),
                     data: cleanContent
                 });
@@ -283,24 +230,33 @@ async function addFileToWatch(filePath, stats) {
         });
     }
 
-    broadcast({ type: 'info', message: `Found log: ${characterName}` });
+    broadcast({ type: 'info', message: `Found ${kind} log: ${character} ${channelName ? `(${channelName})` : ''}` });
 }
 
-// --- MAIN EXECUTION ---
+function startWatching(targetDir) {
+    if (watcher) {
+        console.log('[SYSTEM] Stopping previous watcher...');
+        watcher.close();
+        activeFiles.clear();
+        broadcast({ type: 'reset' });
+    }
 
-if (!fs.existsSync(LOG_DIR)) {
-    console.error('\n!!! ERROR: LOG DIRECTORY NOT FOUND !!!');
-    console.error(`Tried: ${LOG_DIR}`);
-    console.error('Please edit the "MANUAL_LOG_DIR" variable in server.js.');
-} else {
-    console.log(`\n--- EVE Log Watcher Started ---`);
-    console.log(`Target Directory: ${LOG_DIR}`);
-    console.log(`Open http://localhost:${PORT} in your browser\n`);
+    if (!fs.existsSync(targetDir)) {
+        console.error(`[ERROR] Directory not found: ${targetDir}`);
+        return false;
+    }
 
-    const watcher = chokidar.watch(LOG_DIR, {
+    LOG_DIR = targetDir;
+    console.log(`[SYSTEM] Starting watcher on: ${LOG_DIR}`);
+
+    // Watch recursively
+    watcher = chokidar.watch(LOG_DIR, {
         ignored: /(^|[\/\\])\../,
         persistent: true,
-        ignoreInitial: false
+        ignoreInitial: false,
+        depth: 2,
+        usePolling: true, // Force polling to ensure updates are caught on all file systems (OneDrive, etc)
+        interval: 100,   // Check every 0.1 seconds
     });
 
     watcher
@@ -316,35 +272,54 @@ if (!fs.existsSync(LOG_DIR)) {
             }
         });
 
-    wss.on('connection', (ws) => {
-        clients.add(ws);
-
-        ws.on('message', (rawMessage) => {
-            try {
-                const message = JSON.parse(rawMessage);
-                if (message.type === 'focus' && message.character) {
-                    focusClientWindow(message.character);
-                }
-            } catch (e) {
-                console.error('Invalid WS message:', e);
-            }
-        });
-
-        const activeChars = Array.from(activeFiles.values()).map(f => f.character).join(', ');
-        ws.send(JSON.stringify({
-            type: 'info',
-            message: activeChars ? `Monitoring: ${activeChars}` : 'Scanning for logs...'
-        }));
-
-        ws.on('close', () => clients.delete(ws));
-    });
-
-    // HEARTBEAT
-    setInterval(() => {
-        broadcast({ type: 'ping' });
-    }, 30000);
-
-    server.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}`);
-    });
+    return true;
 }
+
+// --- MAIN EXECUTION ---
+
+console.log(`\n--- EVE Log Watcher Started ---`);
+startWatching(LOG_DIR);
+
+wss.on('connection', (ws) => {
+    clients.add(ws);
+
+    ws.send(JSON.stringify({
+        type: 'info',
+        message: `Connected. Watching: ${LOG_DIR}`
+    }));
+
+    ws.on('message', (rawMessage) => {
+        try {
+            const message = JSON.parse(rawMessage);
+
+            if (message.type === 'focus' && message.character) {
+                focusClientWindow(message.character);
+            }
+
+            if (message.type === 'set-path' && message.path) {
+                console.log(`[CONFIG] Path change: ${message.path}`);
+                const success = startWatching(message.path);
+
+                if (success) {
+                    broadcast({ type: 'info', message: `Log path updated to: ${message.path}` });
+                    ws.send(JSON.stringify({ type: 'config-success', path: message.path }));
+                } else {
+                    ws.send(JSON.stringify({ type: 'error', message: `Directory not found: ${message.path}` }));
+                }
+            }
+
+        } catch (e) {
+            console.error('Invalid WS message:', e);
+        }
+    });
+
+    ws.on('close', () => clients.delete(ws));
+});
+
+setInterval(() => {
+    broadcast({ type: 'ping' });
+}, 30000);
+
+server.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+});
