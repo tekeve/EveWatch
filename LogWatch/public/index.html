@@ -9,28 +9,27 @@
             /* EVE UI Palette */
             --bg-dark: #050505;
             --bg-gradient: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050505 100%);
-            
             --card-bg: rgba(20, 20, 25, 0.85);
             --card-border: rgba(255, 255, 255, 0.1);
             --card-header-bg: rgba(30, 30, 35, 0.95);
-            
             --text-main: #dcdcdc;
             --text-muted: #888;
             --accent-blue: #00aaff;
-            
             /* Semantic Colors */
             --col-incoming: rgba(255, 60, 60, 0.15);
             --col-incoming-border: #ff4444;
-            
             --col-outgoing: rgba(0, 200, 100, 0.1);
             --col-outgoing-border: #00ffaa;
-            
-            --col-misc: rgba(0, 100, 255, 0.05);
-            --col-misc-border: #4488ff;
+            --col-logistics: rgba(0, 150, 255, 0.05);
+            --col-logistics-border: #4488ff;
+            --col-events: rgba(255, 200, 0, 0.05);
+            --col-events-border: #ffee00;
             --warp-color: #ffeebb;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -61,20 +60,57 @@
             z-index: 100;
         }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
         h1 {
-            margin: 0; font-size: 0.9rem; font-weight: 600;
-            color: var(--text-main); text-transform: uppercase; letter-spacing: 1px;
-            display: flex; align-items: center; gap: 8px;
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        h1::before { content: ''; display: block; width: 3px; height: 14px; background: var(--accent-blue); }
 
-        #status { font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #555; transition: background-color 0.3s; }
-        .status-active { background-color: #00ff88; box-shadow: 0 0 6px #00ff88; }
-        .status-error { background-color: #ff4444; box-shadow: 0 0 6px #ff4444; }
+            h1::before {
+                content: '';
+                display: block;
+                width: 3px;
+                height: 14px;
+                background: var(--accent-blue);
+            }
+
+        #status {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #555;
+            transition: background-color 0.3s;
+        }
+
+        .status-active {
+            background-color: #00ff88;
+            box-shadow: 0 0 6px #00ff88;
+        }
+
+        .status-error {
+            background-color: #ff4444;
+            box-shadow: 0 0 6px #ff4444;
+        }
 
         /* AGRO DISPLAY STYLES */
         #agro-display {
@@ -97,20 +133,98 @@
         }
 
         @keyframes agroFlash {
-            from { border-color: #ff4444; box-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
-            to { border-color: #ff8888; box-shadow: 0 0 12px rgba(255, 50, 50, 0.6); }
+            from {
+                border-color: #ff4444;
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+            }
+
+            to {
+                border-color: #ff8888;
+                box-shadow: 0 0 12px rgba(255, 50, 50, 0.6);
+            }
         }
 
-        .header-right { display: flex; gap: 8px; align-items: center; }
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Checkbox Controls */
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding-right: 15px;
+        }
+
+            .header-controls label {
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                user-select: none;
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                transition: color 0.2s;
+            }
+
+            .header-controls input[type="checkbox"] {
+                margin: 0;
+                cursor: pointer;
+                accent-color: var(--accent-blue);
+            }
+
+            .header-controls label:hover {
+                color: #fff;
+            }
+
+        /* Number Input Styling */
+        .input-number {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            width: 45px;
+            padding: 2px 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.7rem;
+            border-radius: 2px;
+            text-align: center;
+        }
+
+            .input-number:focus {
+                outline: none;
+                border-color: var(--accent-blue);
+            }
 
         /* Button Styling */
         .btn-header {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted);
-            padding: 4px 10px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1px; cursor: pointer; border-radius: 2px; transition: all 0.2s ease;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s ease;
         }
-        .btn-header:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: var(--accent-blue); }
-        .btn-header:active { transform: translateY(1px); }
+
+            .btn-header:hover {
+                background: rgba(255,255,255,0.1);
+                color: #fff;
+                border-color: var(--accent-blue);
+            }
+
+            .btn-header:active {
+                transform: translateY(1px);
+            }
 
         /* --- TABS --- */
         .tabs-container {
@@ -120,6 +234,7 @@
             padding: 0 8px;
             flex-shrink: 0;
         }
+
         .tab-btn {
             background: transparent;
             border: none;
@@ -132,8 +247,15 @@
             border-bottom: 2px solid transparent;
             transition: all 0.2s;
         }
-        .tab-btn:hover { color: #aaa; }
-        .tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+            .tab-btn:hover {
+                color: #aaa;
+            }
+
+            .tab-btn.active {
+                color: var(--accent-blue);
+                border-bottom-color: var(--accent-blue);
+            }
 
         /* --- VIEWS --- */
         .view-container {
@@ -141,51 +263,97 @@
             flex-grow: 1;
             overflow: hidden;
         }
-        .view-container.active {
-            display: flex;
-            flex-direction: column;
-        }
+
+            .view-container.active {
+                display: flex;
+                flex-direction: column;
+            }
 
         /* --- DASHBOARD GRID (FLEET) --- */
         #dashboard-fleet {
-            flex-grow: 1; padding: 8px; overflow-y: auto; 
+            flex-grow: 1;
+            padding: 8px;
+            overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-            grid-auto-rows: 200px; gap: 8px;
+            grid-auto-rows: 240px;
+            gap: 8px; /* Increased height slightly for 4 sections */
         }
 
         /* --- DASHBOARD GRID (CHAT) --- */
         #dashboard-chat {
-            flex-grow: 1; padding: 8px; overflow-y: auto;
+            flex-grow: 1;
+            padding: 8px;
+            overflow-y: auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); 
-            grid-auto-rows: 350px; gap: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+            grid-auto-rows: 350px;
+            gap: 8px;
         }
 
         /* --- CHARACTER CARD (COMMON) --- */
         .char-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px); border-radius: 2px;
-            display: flex; flex-direction: column; overflow: hidden;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
-            position: relative; cursor: pointer; box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
         }
-        .char-card:hover { border-color: rgba(255,255,255,0.3); box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
-        .char-card:active { transform: scale(0.99); }
-        .char-card.dragging { opacity: 0.6; border: 1px dashed #666; transform: scale(0.95); }
-        
+
+            .char-card:hover {
+                border-color: rgba(255,255,255,0.3);
+                box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            }
+
+            .char-card:active {
+                transform: scale(0.99);
+            }
+
+            .char-card.dragging {
+                opacity: 0.6;
+                border: 1px dashed #666;
+                transform: scale(0.95);
+            }
+
         /* Animation Classes */
         @keyframes focusPulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); border-color: #fff; }
-            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); border-color: var(--accent-blue); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+                border-color: #fff;
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+                border-color: var(--accent-blue);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
         }
-        .char-card.focus-flash { animation: focusPulse 0.4s ease-out; }
+
+        .char-card.focus-flash {
+            animation: focusPulse 0.4s ease-out;
+        }
 
         @keyframes damagePulse {
-            0%, 100% { border-color: var(--col-incoming-border); background: var(--card-bg); }
-            50% { border-color: #ff0000; background: rgba(50, 0, 0, 0.8); }
+            0%, 100% {
+                border-color: var(--col-incoming-border);
+                background: var(--card-bg);
+            }
+
+            50% {
+                border-color: #ff0000;
+                background: rgba(50, 0, 0, 0.8);
+            }
         }
+
         .char-card.taking-damage {
             animation: damagePulse 0.8s infinite;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
@@ -193,50 +361,177 @@
 
         /* Header */
         .card-header {
-            background: var(--card-header-bg); padding: 4px 8px; height: 28px; 
+            background: var(--card-header-bg);
+            padding: 4px 8px;
+            height: 32px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-            user-select: none; flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            flex-shrink: 0;
         }
 
-        .header-left-info { display: flex; gap: 6px; align-items: baseline; overflow: hidden; max-width: 65%; }
+        .header-left-info {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+            overflow: hidden;
+            max-width: 55%;
+        }
+
         .char-name {
-            color: #fff; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.3px;
-            pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Header Right Logic */
-        .header-right-group { display: flex; align-items: center; gap: 6px; min-width: 35%; justify-content: flex-end; }
-        
-        .header-right-info { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; line-height: 1; }
-        .efficiency-stat { font-size: 0.65rem; font-weight: 700; color: #555; }
-        .eff-high { color: #00ffaa; text-shadow: 0 0 3px rgba(0, 255, 170, 0.3); }
-        .eff-med { color: #ffcc00; }
-        .eff-low { color: #888; }
-        .last-active { font-family: 'Consolas', monospace; font-size: 0.55rem; color: #555; margin-top: 2px; pointer-events: none; }
+        .header-right-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 45%;
+            justify-content: flex-end;
+        }
+
+        .header-right-info {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+            margin-right: 4px;
+        }
+
+        .efficiency-stat {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+            .efficiency-stat span {
+                display: block;
+            }
+
+        .eff-label {
+            font-size: 0.55rem;
+            color: #666;
+            margin-bottom: 1px;
+            text-transform: uppercase;
+        }
+
+        .eff-val {
+            color: #888;
+        }
+
+        .eff-high .eff-val {
+            color: #00ffaa;
+            text-shadow: 0 0 3px rgba(0, 255, 170, 0.3);
+        }
+
+        .eff-med .eff-val {
+            color: #ffcc00;
+        }
+
+        .eff-low .eff-val {
+            color: #888;
+        }
+
+        .last-active {
+            display: none;
+        }
+        /* HIDDEN TIMESTAMP */
 
         .btn-close {
-            background: transparent; border: none; color: #666;
-            font-size: 1.2rem; line-height: 1; cursor: pointer;
-            padding: 0; margin-left: 4px; transition: color 0.2s;
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 4px;
+            transition: color 0.2s;
             font-weight: 400;
         }
-        .btn-close:hover { color: #ff4444; }
+
+            .btn-close:hover {
+                color: #ff4444;
+            }
 
         /* Log Sections */
-        .log-section { display: flex; flex-direction: column; overflow: hidden; border-bottom: 1px solid rgba(0,0,0,0.5); pointer-events: none; position: relative; }
-        .section-header {
-            font-size: 0.6rem; text-transform: uppercase; padding: 1px 6px; font-weight: 700;
-            letter-spacing: 0.5px; user-select: none; display: flex; justify-content: space-between;
-            height: 16px; line-height: 16px; flex-shrink: 0; background: rgba(0,0,0,0.3);
-            position: relative; z-index: 2;
+        .log-section {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(0,0,0,0.5);
+            pointer-events: none;
+            position: relative;
         }
-        .section-incoming { background: linear-gradient(to bottom, var(--col-incoming), transparent); }
-        .section-incoming .section-header { color: #ff6b6b; border-left: 2px solid #ff4444; }
-        .section-outgoing { background: linear-gradient(to bottom, var(--col-outgoing), transparent); }
-        .section-outgoing .section-header { color: #4cd137; border-left: 2px solid #00ffaa; }
-        .section-misc { background: linear-gradient(to bottom, var(--col-misc), transparent); border-bottom: none; }
-        .section-misc .section-header { color: #4faaff; border-left: 2px solid #4488ff; }
+
+        .section-header {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            padding: 1px 6px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            height: 16px;
+            line-height: 16px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-incoming {
+            background: linear-gradient(to bottom, var(--col-incoming), transparent);
+        }
+
+            .section-incoming .section-header {
+                color: #ff6b6b;
+                border-left: 2px solid #ff4444;
+            }
+
+        .section-outgoing {
+            background: linear-gradient(to bottom, var(--col-outgoing), transparent);
+        }
+
+            .section-outgoing .section-header {
+                color: #4cd137;
+                border-left: 2px solid #00ffaa;
+            }
+
+        /* New Logistics & Events Styles */
+        .section-logistics {
+            background: linear-gradient(to bottom, var(--col-logistics), transparent);
+        }
+
+            .section-logistics .section-header {
+                color: #4faaff;
+                border-left: 2px solid var(--col-logistics-border);
+            }
+
+        .section-events {
+            background: linear-gradient(to bottom, var(--col-events), transparent);
+            border-bottom: none;
+        }
+
+            .section-events .section-header {
+                color: #ffdd44;
+                border-left: 2px solid var(--col-events-border);
+            }
 
         /* GRAPH STYLES (BACKGROUND MODE) */
         .dps-graph-container {
@@ -248,11 +543,23 @@
             pointer-events: none;
             z-index: 0; /* Behind text */
         }
+
+        /* Toggle Visibility Classes */
+        body.hide-graphs .dps-graph-container {
+            display: none !important;
+        }
+
+        /* CHANGED: Use visibility:hidden instead of display:none. */
+        body.hide-text .log-content {
+            visibility: hidden !important;
+        }
+
         canvas.dps-canvas {
             width: 100%;
             height: 100%;
             display: block;
         }
+
         .dps-overlay-text {
             position: absolute;
             top: 2px;
@@ -267,48 +574,126 @@
 
         /* Log Content */
         .log-content {
-            height: 36px; 
-            overflow-y: auto; 
+            height: 36px;
+            overflow-y: auto;
             padding: 2px 6px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 11px;
-            display: block; 
-            pointer-events: auto; 
-            line-height: 1.5; 
+            display: block;
+            pointer-events: auto;
+            line-height: 1.5;
             color: #bbb;
-            position: relative; 
+            position: relative;
             z-index: 1; /* On top of graph */
             background: transparent; /* Transparent to show graph */
         }
-        
+
         /* CHAT SPECIFIC */
         .chat-content {
-            flex-grow: 1; overflow-y: auto; padding: 6px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 11px;
-            display: flex; flex-direction: column; gap: 2px;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
-        .log-entry { display: flex; align-items: baseline; border-bottom: 1px solid rgba(255,255,255,0.02); white-space: nowrap; overflow: hidden; }
-        .log-entry:hover { background: rgba(255,255,255,0.05); }
-        .chat-entry { display: flex; align-items: flex-start; gap: 6px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.02); line-height: 1.4; }
+        .log-entry {
+            display: flex;
+            align-items: baseline;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            white-space: nowrap;
+            overflow: hidden;
+        }
 
-        .timestamp { color: #555; margin-right: 6px; font-size: 0.6rem; flex-shrink: 0; min-width: 36px; }
-        .msg-text { overflow: hidden; text-overflow: ellipsis; }
-        
-        .chat-sender { color: #00ff88; font-weight: 600; white-space: nowrap; }
-        .chat-message { color: #ddd; white-space: pre-wrap; word-break: break-word; }
-        .chat-system { color: #888; font-style: italic; }
+            .log-entry:hover {
+                background: rgba(255,255,255,0.05);
+            }
 
-        .text-dmg-in { color: #ff8888; }
-        .text-dmg-out { color: #88ffaa; }
-        .text-misc { color: #99a; }
-        .text-warp { color: var(--warp-color); font-style: italic; }
-        b { color: #fff; font-weight: 600; }
+        .chat-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            line-height: 1.4;
+        }
 
-        ::-webkit-scrollbar { width: 3px; height: 3px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        .timestamp {
+            color: #555;
+            margin-right: 6px;
+            font-size: 0.6rem;
+            flex-shrink: 0;
+            min-width: 36px;
+        }
+
+        .msg-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-sender {
+            color: #00ff88;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .chat-message {
+            color: #ddd;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .chat-system {
+            color: #888;
+            font-style: italic;
+        }
+
+        .text-dmg-in {
+            color: #ff8888;
+        }
+
+        .text-dmg-out {
+            color: #88ffaa;
+        }
+
+        .text-logi {
+            color: #88ccff;
+        }
+
+        .text-event {
+            color: #ffeeaa;
+        }
+
+        .text-warp {
+            color: var(--warp-color);
+            font-style: italic;
+        }
+
+        b {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px;
+            height: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 2px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
     </style>
 </head>
 <body>
@@ -324,6 +709,12 @@
             <div id="agro-display"></div>
         </div>
         <div class="header-right">
+            <!-- Checkbox Controls -->
+            <div class="header-controls">
+                <label><input type="checkbox" id="chk-graphs" checked> Graphs</label>
+                <label><input type="checkbox" id="chk-text" checked> Text</label>
+                <label title="History Length in Seconds">Hist(s): <input type="number" id="num-history" class="input-number" value="60" min="10" max="600" step="10"></label>
+            </div>
             <button class="btn-header" onclick="resetHidden()">Reset Chars</button>
             <button class="btn-header" onclick="resetHiddenChannels()">Reset Channels</button>
             <button class="btn-header" onclick="promptLogPath()">Change Logs</button>
@@ -350,52 +741,108 @@
         const statusText = document.getElementById('status-text');
         const statusDot = document.getElementById('status-dot');
         const agroDisplay = document.getElementById('agro-display');
-        
-        // State tracking
-        let charCards = {}; 
-        let chatCards = {}; 
-        let chatHistory = {}; 
-        let charDamageStats = {}; 
-        let maxFleetDamage = 0; 
-        
-        // DPS Graph State { charName: { accIn: 0, accOut: 0, incoming: [], outgoing: [] } }
+
+        // Controls
+        const chkGraphs = document.getElementById('chk-graphs');
+        const chkText = document.getElementById('chk-text');
+        const numHistory = document.getElementById('num-history');
+
+        // DPS Graph State
         let charDpsData = {};
-        const MAX_GRAPH_POINTS = 60; // 60 seconds history
+        let MAX_GRAPH_POINTS = 60; // Default 60s history
+
+        function updateVisibility() {
+            if (!chkGraphs.checked) document.body.classList.add('hide-graphs');
+            else document.body.classList.remove('hide-graphs');
+
+            if (!chkText.checked) document.body.classList.add('hide-text');
+            else document.body.classList.remove('hide-text');
+
+            localStorage.setItem('eve-show-graphs', chkGraphs.checked);
+            localStorage.setItem('eve-show-text', chkText.checked);
+        }
+
+        function updateHistorySettings() {
+            let val = parseInt(numHistory.value, 10);
+            if (isNaN(val) || val < 10) val = 10;
+            MAX_GRAPH_POINTS = val;
+            localStorage.setItem('eve-graph-history', val);
+
+            // Trim Existing Data Arrays if size reduced
+            Object.keys(charDpsData).forEach(char => {
+                const data = charDpsData[char];
+                ['incoming', 'outgoing', 'shield', 'armor', 'cap'].forEach(key => {
+                    if (data[key].length > MAX_GRAPH_POINTS) {
+                        data[key] = data[key].slice(-MAX_GRAPH_POINTS);
+                    }
+                });
+            });
+        }
+
+        chkGraphs.onchange = updateVisibility;
+        chkText.onchange = updateVisibility;
+        numHistory.onchange = updateHistorySettings;
+
+        // Init Prefs
+        const savedGraphPref = localStorage.getItem('eve-show-graphs');
+        const savedTextPref = localStorage.getItem('eve-show-text');
+        const savedHistoryPref = localStorage.getItem('eve-graph-history');
+
+        if (savedGraphPref !== null) chkGraphs.checked = savedGraphPref === 'true';
+        if (savedTextPref !== null) chkText.checked = savedTextPref === 'true';
+        if (savedHistoryPref !== null) {
+            const hVal = parseInt(savedHistoryPref, 10);
+            numHistory.value = hVal;
+            MAX_GRAPH_POINTS = hVal;
+        }
+
+        updateVisibility();
+
+        // State tracking
+        let charCards = {};
+        let chatCards = {};
+        let chatHistory = {};
+        let charDamageStats = {};
+
+        // CHANGED: Store active seconds as a Set of unique timestamp strings
+        let charTimeStats = {}; // { charName: Set<string_timestamp> }
+
+        let maxFleetDamage = 0;
 
         // Active Agro List
         let recentAgroList = [];
-        
+
         // Hidden characters State
         let hiddenCharacters = new Set();
         try {
             const stored = JSON.parse(localStorage.getItem('eve-hidden-chars'));
             if (Array.isArray(stored)) hiddenCharacters = new Set(stored);
-        } catch(e) {}
+        } catch (e) { }
 
         // Hidden Channels State
         let hiddenChannels = new Set();
         try {
             const stored = JSON.parse(localStorage.getItem('eve-hidden-channels'));
             if (Array.isArray(stored)) hiddenChannels = new Set(stored);
-        } catch(e) {}
-        
+        } catch (e) { }
+
         let ws;
 
         // Load saved order
         let savedOrder = [];
-        try { savedOrder = JSON.parse(localStorage.getItem('eve-layout')) || []; } catch (e) {}
+        try { savedOrder = JSON.parse(localStorage.getItem('eve-layout')) || []; } catch (e) { }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
-            
+
             if (tab === 'fleet') {
                 document.querySelector('.tab-btn:first-child').classList.add('active');
                 document.getElementById('view-fleet').classList.add('active');
             } else {
                 document.querySelector('.tab-btn:last-child').classList.add('active');
                 document.getElementById('view-chat').classList.add('active');
-                
+
                 setTimeout(() => {
                     document.querySelectorAll('#dashboard-chat .chat-content').forEach(el => {
                         el.scrollTop = el.scrollHeight;
@@ -424,12 +871,12 @@
 
             ws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-                if (message.type === 'ping') return; 
+                if (message.type === 'ping') return;
                 if (message.type === 'info') console.log('[SERVER INFO]', message.message);
                 if (message.type === 'error') alert('Server Error: ' + message.message);
                 if (message.type === 'config-success') alert('Log directory updated to: ' + message.path);
                 if (message.type === 'reset') handleReset();
-                
+
                 if (message.type === 'update') {
                     if (message.kind === 'chat') handleChatUpdate(message);
                     else handleGameUpdate(message);
@@ -442,7 +889,7 @@
             const newPath = prompt("Enter full path to EVE logs folder (parent of Gamelogs/Chatlogs):", currentPath);
             if (newPath && newPath.trim() !== "") {
                 const cleanPath = newPath.replace(/"/g, '').trim();
-                if(ws && ws.readyState === WebSocket.OPEN) {
+                if (ws && ws.readyState === WebSocket.OPEN) {
                     ws.send(JSON.stringify({ type: 'set-path', path: cleanPath }));
                     localStorage.setItem('eve-log-path', cleanPath);
                 } else { alert("Not connected."); }
@@ -457,16 +904,17 @@
             chatHistory = {};
             charDamageStats = {};
             charDpsData = {};
+            charTimeStats = {};
             maxFleetDamage = 0;
             recentAgroList = [];
             renderAgro();
         }
 
         function hideCharacter(charName) {
-            if(confirm(`Hide ${charName} from the monitor?`)) {
+            if (confirm(`Hide ${charName} from the monitor?`)) {
                 hiddenCharacters.add(charName);
                 const card = charCards[charName];
-                if(card) {
+                if (card) {
                     card.remove();
                     delete charCards[charName];
                 }
@@ -474,11 +922,11 @@
         }
 
         function hideChannel(channelName) {
-            if(confirm(`Hide channel '${channelName}' from the monitor?`)) {
+            if (confirm(`Hide channel '${channelName}' from the monitor?`)) {
                 hiddenChannels.add(channelName);
                 const cardId = `chat-${channelName}`;
                 const card = chatCards[cardId];
-                if(card) {
+                if (card) {
                     card.remove();
                     delete chatCards[cardId];
                 }
@@ -486,7 +934,7 @@
         }
 
         function resetHidden() {
-            if(confirm("Unhide all CHARACTERS and refresh page?")) {
+            if (confirm("Unhide all CHARACTERS and refresh page?")) {
                 hiddenCharacters.clear();
                 localStorage.removeItem('eve-hidden-chars');
                 window.location.reload();
@@ -494,7 +942,7 @@
         }
 
         function resetHiddenChannels() {
-            if(confirm("Unhide all CHAT CHANNELS and refresh page?")) {
+            if (confirm("Unhide all CHAT CHANNELS and refresh page?")) {
                 hiddenChannels.clear();
                 localStorage.removeItem('eve-hidden-channels');
                 window.location.reload();
@@ -527,22 +975,35 @@
         setInterval(() => {
             Object.keys(charDpsData).forEach(charName => {
                 const data = charDpsData[charName];
-                
-                // Push current accumulator as this second's DPS
+
+                // Push current accumulator as this second's data
                 data.incoming.push(data.accIn);
                 data.outgoing.push(data.accOut);
-                
+
+                // Push Logistics accumulators
+                data.shield.push(data.accShield);
+                data.armor.push(data.accArmor);
+                data.cap.push(data.accCap);
+
                 // Reset accumulators
                 data.accIn = 0;
                 data.accOut = 0;
+                data.accShield = 0;
+                data.accArmor = 0;
+                data.accCap = 0;
 
                 // Maintain Max History
-                if(data.incoming.length > MAX_GRAPH_POINTS) data.incoming.shift();
-                if(data.outgoing.length > MAX_GRAPH_POINTS) data.outgoing.shift();
+                if (data.incoming.length > MAX_GRAPH_POINTS) data.incoming.shift();
+                if (data.outgoing.length > MAX_GRAPH_POINTS) data.outgoing.shift();
+                if (data.shield.length > MAX_GRAPH_POINTS) data.shield.shift();
+                if (data.armor.length > MAX_GRAPH_POINTS) data.armor.shift();
+                if (data.cap.length > MAX_GRAPH_POINTS) data.cap.shift();
 
                 // Trigger Redraw
                 drawDpsGraph(charName, 'incoming');
                 drawDpsGraph(charName, 'outgoing');
+                drawDpsGraph(charName, 'logistics');
+                drawDpsGraph(charName, 'events');
             });
         }, 1000);
 
@@ -554,161 +1015,92 @@
             if (!canvas) return;
 
             const ctx = canvas.getContext('2d');
-            const width = canvas.width = canvas.clientWidth; // Adjust internal res to display
+            const width = canvas.width = canvas.clientWidth;
             const height = canvas.height = canvas.clientHeight;
-            
-            const dataPoints = charDpsData[charName][type];
+
+            ctx.clearRect(0, 0, width, height);
+
+            const charData = charDpsData[charName];
+
+            // --- LOGISTICS GRAPH (Shield + Armor) ---
+            if (type === 'logistics') {
+                const sets = [
+                    { data: charData.shield, color: '#4488ff' }, // Blue Shield
+                    { data: charData.armor, color: '#ffaa00' }   // Orange Armor
+                ];
+                // Scale based on combined max
+                let maxVal = 100;
+                sets.forEach(set => {
+                    const localMax = Math.max(...set.data);
+                    if (localMax > maxVal) maxVal = localMax;
+                });
+                sets.forEach(set => drawGraphLine(ctx, set.data, width, height, maxVal, set.color));
+                return;
+            }
+
+            // --- EVENTS GRAPH (Capacitor) ---
+            if (type === 'events') {
+                const dataPoints = charData.cap;
+                let maxVal = Math.max(...dataPoints, 100);
+                // Yellow for Cap, with fill
+                drawGraphLine(ctx, dataPoints, width, height, maxVal, '#ffee00', 'rgba(255, 238, 0, 0.1)');
+                return;
+            }
+
+            // --- STANDARD GRAPHS (Incoming/Outgoing) ---
+            const dataPoints = charData[type];
             const latestValue = dataPoints[dataPoints.length - 1] || 0;
 
             // Update Text Overlay
             const overlay = card.querySelector(`.dps-overlay-${type}`);
-            if(overlay) overlay.textContent = latestValue > 0 ? `${latestValue} DPS` : '';
-
-            ctx.clearRect(0, 0, width, height);
+            if (overlay) overlay.textContent = latestValue > 0 ? `${latestValue} DPS` : '';
 
             if (dataPoints.length < 2) return;
 
-            // Find max for scaling (min 50 to avoid flat lines looking jagged)
+            // Find max for scaling
             let maxVal = Math.max(...dataPoints, 100);
 
-            // Style
+            // Determine Colors
+            const strokeColor = type === 'incoming' ? 'rgba(255, 60, 60, 0.6)' : 'rgba(0, 200, 100, 0.6)';
+            const fillColor = type === 'incoming' ? 'rgba(255, 60, 60, 0.1)' : 'rgba(0, 200, 100, 0.05)';
+
+            drawGraphLine(ctx, dataPoints, width, height, maxVal, strokeColor, fillColor);
+        }
+
+        function drawGraphLine(ctx, dataPoints, width, height, maxVal, strokeColor, fillColor = null) {
+            if (dataPoints.length < 2) return;
+
             ctx.beginPath();
             ctx.lineWidth = 1.5;
-            
-            // FADED COLORS FOR BACKGROUND GRAPH
-            ctx.strokeStyle = type === 'incoming' ? 'rgba(255, 60, 60, 0.6)' : 'rgba(0, 200, 100, 0.6)';
-            ctx.fillStyle = type === 'incoming' ? 'rgba(255, 60, 60, 0.1)' : 'rgba(0, 200, 100, 0.05)';
+            ctx.strokeStyle = strokeColor;
+            if (fillColor) ctx.fillStyle = fillColor;
 
-            // Draw Path
             const stepX = width / (MAX_GRAPH_POINTS - 1);
-            
-            // Move to first point
-            let x = 0;
-            let y = height - (dataPoints[0] / maxVal) * height;
-            ctx.moveTo(x, y);
+            const getX = (i) => i * stepX;
+            const getY = (i) => height - (dataPoints[i] / maxVal) * height;
 
-            for (let i = 1; i < dataPoints.length; i++) {
-                x = i * stepX;
-                y = height - (dataPoints[i] / maxVal) * height; // Invert Y axis
-                ctx.lineTo(x, y);
+            // Move to first point
+            ctx.moveTo(getX(0), getY(0));
+
+            // Quadratic Curve Loop
+            for (let i = 0; i < dataPoints.length - 1; i++) {
+                const xMid = (getX(i) + getX(i + 1)) / 2;
+                const yMid = (getY(i) + getY(i + 1)) / 2;
+                ctx.quadraticCurveTo(getX(i), getY(i), xMid, yMid);
             }
 
-            // Stroke Line
+            // Connect Last Segment
+            const lastI = dataPoints.length - 1;
+            ctx.quadraticCurveTo(getX(lastI - 1), getY(lastI - 1), getX(lastI), getY(lastI));
+
             ctx.stroke();
 
-            // Fill Area
-            ctx.lineTo(width, height);
-            ctx.lineTo(0, height);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        // --- CHAT LOGIC ---
-
-        function handleChatUpdate(payload) {
-            const { character, channelName, data } = payload;
-            if (!channelName) return; 
-            
-            // Check if channel is hidden
-            if (hiddenChannels.has(channelName)) return;
-
-            const cardId = `chat-${channelName}`;
-            if (!chatCards[cardId]) createChatCard(channelName, cardId);
-            if (!chatHistory[channelName]) chatHistory[channelName] = new Set();
-
-            const card = chatCards[cardId];
-            const container = card.querySelector('.chat-content');
-            const lines = data.split(/\r?\n/);
-            
-            let lastTime = '';
-
-            lines.forEach(line => {
-                if (!line.trim()) return;
-                const chatMatch = line.match(/\[\s*(.*?)\s*\]\s*(.*?) > (.*)/);
-                const systemMatch = !chatMatch ? line.match(/\[\s*(.*?)\s*\]\s*(.*)/) : null;
-
-                if (chatMatch) {
-                    const timeStr = chatMatch[1].split(' ')[1] || chatMatch[1];
-                    const sender = chatMatch[2];
-                    const message = chatMatch[3];
-                    addChatLine(channelName, timeStr, sender, message, 'chat-message', container);
-                    lastTime = timeStr;
-                } 
-                else if (systemMatch) {
-                    const timeStr = systemMatch[1].split(' ')[1] || systemMatch[1];
-                    const message = systemMatch[2];
-                    addChatLine(channelName, timeStr, "", message, 'chat-system', container);
-                    lastTime = timeStr;
-                }
-            });
-
-            if (container.children.length > 100) {
-                container.removeChild(container.firstChild);
+            if (fillColor) {
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+                ctx.closePath();
+                ctx.fill();
             }
-            
-            requestAnimationFrame(() => {
-                container.scrollTop = container.scrollHeight;
-            });
-            
-            if (lastTime) {
-                card.querySelector('.last-active').textContent = lastTime;
-            }
-        }
-
-        function addChatLine(channelName, time, sender, message, cssClass, container) {
-            const signature = `${time}|${sender}|${message}`;
-            if (chatHistory[channelName].has(signature)) return;
-            
-            chatHistory[channelName].add(signature);
-            if (chatHistory[channelName].size > 500) {
-                const first = chatHistory[channelName].values().next().value;
-                chatHistory[channelName].delete(first);
-            }
-
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'chat-entry';
-            const senderHtml = sender ? `<span class="chat-sender">${sender}</span>` : '';
-            entryDiv.innerHTML = `
-                <span class="timestamp">${time}</span>
-                ${senderHtml}
-                <span class="chat-message ${cssClass}">${message}</span>
-            `;
-            container.appendChild(entryDiv);
-        }
-
-        function createChatCard(channelName, id) {
-            const card = document.createElement('div');
-            card.className = 'char-card';
-            card.style.height = '100%'; 
-            const header = document.createElement('div');
-            header.className = 'card-header';
-            header.style.background = 'rgba(0, 50, 100, 0.8)'; 
-            const leftInfo = document.createElement('div');
-            leftInfo.className = 'header-left-info';
-            leftInfo.innerHTML = `<span class="char-name">${channelName}</span>`;
-            const rightGroup = document.createElement('div');
-            rightGroup.className = 'header-right-group';
-            const rightInfo = document.createElement('div');
-            rightInfo.className = 'header-right-info';
-            rightInfo.innerHTML = `<span class="last-active">Active</span>`;
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '&times;'; 
-            closeBtn.className = 'btn-close';
-            closeBtn.title = 'Hide Channel';
-            closeBtn.onclick = (e) => {
-                e.stopPropagation(); 
-                hideChannel(channelName);
-            };
-            rightGroup.appendChild(rightInfo);
-            rightGroup.appendChild(closeBtn);
-            header.appendChild(leftInfo);
-            header.appendChild(rightGroup);
-            const content = document.createElement('div');
-            content.className = 'chat-content';
-            card.appendChild(header);
-            card.appendChild(content);
-            dashboardChat.appendChild(card);
-            chatCards[id] = card;
         }
 
         // --- GAME LOGIC ---
@@ -720,21 +1112,30 @@
             if (!charCards[character]) {
                 createCharCard(character);
                 if (!charDamageStats[character]) charDamageStats[character] = 0;
+
+                // CHANGED: Initialize as a Set to count unique active timestamps
+                if (!charTimeStats[character]) charTimeStats[character] = new Set();
             }
 
             const card = charCards[character];
             const lines = data.split(/\r?\n/);
             let damageUpdated = false;
+            let timeUpdated = false;
 
             lines.forEach(line => {
                 if (!line.trim()) return;
 
-                let timeStr = '';
-                let rawMsg = line;
                 const timestampMatch = line.match(/^\[\s*\d{4}\.\d{2}\.\d{2}\s+(.*?)\s*\](.*)/);
-                if (timestampMatch) {
-                    timeStr = timestampMatch[1].split('.')[0];
-                    rawMsg = timestampMatch[2];
+                if (!timestampMatch) return;
+
+                const timeStr = timestampMatch[1].split('.')[0];
+                const rawMsg = timestampMatch[2];
+
+                // Track Active Time (Add unique timestamp to Set)
+                // This accurately measures "density" of activity. If they stop logging events, the set size stops growing.
+                if (charTimeStats[character]) {
+                    charTimeStats[character].add(timeStr);
+                    timeUpdated = true;
                 }
 
                 const isCombatTag = rawMsg.includes('(combat)');
@@ -745,49 +1146,47 @@
                     .trim();
 
                 const lower = cleanMsg.toLowerCase();
-                const isRepairOrCap = lower.includes('repair') || lower.includes('transfer') || lower.includes('aid') || lower.includes('drain') || lower.includes('added') || lower.includes('capacity') || lower.includes('capacitor') || lower.includes('energy') || lower.includes('gj') || lower.includes('remote') || lower.includes('neutraliz');
 
-                let targetSection = 'misc';
-                let textClass = 'text-misc';
+                // Identify Message Type based on keywords
+                const isRepairOrCap = lower.includes('repair') || lower.includes('transfer') || lower.includes('aid') || lower.includes('drain') || lower.includes('added') || lower.includes('capacity') || lower.includes('capacitor') || lower.includes('energy') || lower.includes('gj') || lower.includes('remote') || lower.includes('neutraliz');
+                const isEwar = lower.includes('scramble') || lower.includes('disrupt') || lower.includes('web');
+                const isTravel = lower.includes('warping') || lower.includes('jumping');
+
+                // DEFAULT: Events
+                let targetSection = 'events';
+                let textClass = 'text-event';
 
                 if (isCombatTag && !isRepairOrCap) {
+                    // PURE COMBAT (Damage)
                     if (/\bfrom\b/.test(cleanMsg)) {
-                        
-                        // DAMAGE GRAPH PARSING (INCOMING)
+                        targetSection = 'incoming';
+                        textClass = 'text-dmg-in';
+
+                        // Incoming DPS Stats
                         const incomingDmgMatch = cleanMsg.match(/^(\d+)/);
                         if (incomingDmgMatch && charDpsData[character]) {
                             charDpsData[character].accIn += parseInt(incomingDmgMatch[1], 10);
                         }
 
-                        // AGRO LOGIC
+                        // Agro Check
                         let isDirectedAtMe = true;
-                        const toSplit = cleanMsg.toLowerCase().split(' to ');
+                        const toSplit = lower.split(' to ');
                         if (toSplit.length > 1) {
-                            const targetName = toSplit[toSplit.length - 1]; 
-                            const charNameLower = character.toLowerCase();
-                            if (!targetName.includes(charNameLower) && !targetName.includes('you')) {
+                            const targetName = toSplit[toSplit.length - 1];
+                            if (!targetName.includes(character.toLowerCase()) && !targetName.includes('you')) {
                                 isDirectedAtMe = false;
                             }
                         }
+                        if (isDirectedAtMe) triggerDamageAlert(card);
 
-                        // Header extraction
-                        let targetName = "Unknown";
-                        const targetMatch = cleanMsg.match(/ to (.*?)(?:[!.?]|$)/); 
-                        if (targetMatch) targetName = targetMatch[1].trim();
-
-                        if (cleanMsg.toLowerCase().includes('scramble') || cleanMsg.toLowerCase().includes('disrupt')) {
-                            let displayName = targetName;
+                        // Scram/Disrupt Agro Update
+                        if (lower.includes('scramble') || lower.includes('disrupt')) {
+                            // Extract who is doing it
+                            const targetMatch = cleanMsg.match(/ to (.*?)(?:[!.?]|$)/);
+                            let displayName = "Unknown";
+                            if (targetMatch) displayName = targetMatch[1].trim();
                             if (displayName.toLowerCase() === 'you') displayName = character;
                             updateRecentAgro(displayName);
-                        }
-
-                        if (isDirectedAtMe) {
-                            targetSection = 'incoming';
-                            textClass = 'text-dmg-in';
-                            triggerDamageAlert(card);
-                        } else {
-                            targetSection = 'misc';
-                            textClass = 'text-misc';
                         }
 
                     } else if (/\bto\b/.test(cleanMsg)) {
@@ -797,8 +1196,7 @@
                         if (dmgMatch) {
                             const dmgAmount = parseInt(dmgMatch[1], 10);
                             charDamageStats[character] = (charDamageStats[character] || 0) + dmgAmount;
-                            
-                            // DAMAGE GRAPH PARSING (OUTGOING)
+
                             if (charDpsData[character]) {
                                 charDpsData[character].accOut += dmgAmount;
                             }
@@ -807,45 +1205,75 @@
                             damageUpdated = true;
                         }
                     }
+                } else if (isRepairOrCap) {
+                    // LOGISTICS & CAP HANDLING
+                    const isIncomingLogi = lower.includes('boosted by') || lower.includes('repaired by') || lower.includes('transmitted by');
+
+                    if (isIncomingLogi) {
+                        // Improved Parsing: Search for number associated with unit, or first number
+                        let amountMatch = cleanMsg.match(/(\d+)\s*(?:GJ|energy|capacity|shield|armor|remote|units)/i);
+                        if (!amountMatch) amountMatch = cleanMsg.match(/^(\d+)/);
+
+                        const val = amountMatch ? parseInt(amountMatch[1], 10) : 0;
+
+                        if (/shield/i.test(cleanMsg)) {
+                            targetSection = 'logistics';
+                            textClass = 'text-logi';
+                            if (val > 0) charDpsData[character].accShield += val;
+                        }
+                        else if (/armor/i.test(cleanMsg)) {
+                            targetSection = 'logistics';
+                            textClass = 'text-logi';
+                            if (val > 0) charDpsData[character].accArmor += val;
+                        }
+                        else if ((/energy|capacitor/i.test(cleanMsg)) && !/neutraliz|drain/i.test(cleanMsg)) {
+                            targetSection = 'events'; // Cap goes to events
+                            textClass = 'text-event';
+                            if (val > 0) charDpsData[character].accCap += val;
+                        } else {
+                            targetSection = 'events'; // Drains/Neuts
+                            textClass = 'text-event';
+                        }
+                    } else {
+                        // Outgoing reps or other noise -> classify broadly
+                        if (/shield|armor/i.test(cleanMsg)) {
+                            targetSection = 'logistics';
+                            textClass = 'text-logi';
+                        } else {
+                            targetSection = 'events';
+                            textClass = 'text-event';
+                        }
+                    }
                 } else {
-                    if (cleanMsg.includes('Warping') || cleanMsg.includes('Jumping')) textClass = 'text-warp';
+                    // OTHER EVENTS (EWAR, TRAVEL)
+                    if (isTravel) textClass = 'text-warp';
+                    targetSection = 'events';
                 }
 
+                // Append to Log
                 const container = card.querySelector(`.section-${targetSection} .log-content`);
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'log-entry';
-                entryDiv.title = cleanMsg; 
-                const timeSpan = document.createElement('span');
-                timeSpan.className = 'timestamp';
-                timeSpan.textContent = timeStr;
-                const msgSpan = document.createElement('span');
-                msgSpan.className = `msg-text ${textClass}`;
-                if (/\d+/.test(cleanMsg)) msgSpan.innerHTML = cleanMsg.replace(/(\d+)/g, '<b>$1</b>');
-                else msgSpan.textContent = cleanMsg;
-                entryDiv.appendChild(timeSpan);
-                entryDiv.appendChild(msgSpan);
-                container.appendChild(entryDiv);
-                if (container.children.length > 40) container.removeChild(container.firstChild);
-                container.scrollTop = container.scrollHeight;
-                card.querySelector('.last-active').textContent = timeStr;
+                // Safety check if section exists (it should)
+                if (container) {
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'log-entry';
+                    entryDiv.title = cleanMsg;
+                    const timeSpan = document.createElement('span');
+                    timeSpan.className = 'timestamp';
+                    timeSpan.textContent = timeStr;
+                    const msgSpan = document.createElement('span');
+                    msgSpan.className = `msg-text ${textClass}`;
+                    if (/\d+/.test(cleanMsg)) msgSpan.innerHTML = cleanMsg.replace(/(\d+)/g, '<b>$1</b>');
+                    else msgSpan.textContent = cleanMsg;
+                    entryDiv.appendChild(timeSpan);
+                    entryDiv.appendChild(msgSpan);
+                    container.appendChild(entryDiv);
+                    if (container.children.length > 40) container.removeChild(container.firstChild);
+                    container.scrollTop = container.scrollHeight;
+                }
+                // Removed timestamp update from header here
             });
 
-            if (damageUpdated) updateEfficiencyDisplay();
-        }
-
-        function updateEfficiencyDisplay() {
-            if (maxFleetDamage === 0) return;
-            Object.keys(charCards).forEach(charName => {
-                const card = charCards[charName];
-                const myDamage = charDamageStats[charName] || 0;
-                const effElem = card.querySelector('.efficiency-stat');
-                const percent = Math.round((myDamage / maxFleetDamage) * 100);
-                effElem.textContent = `EFF: ${percent}%`;
-                effElem.className = 'efficiency-stat'; 
-                if (percent >= 95) effElem.classList.add('eff-high');
-                else if (percent >= 50) effElem.classList.add('eff-med');
-                else effElem.classList.add('eff-low');
-            });
+            if (damageUpdated || timeUpdated) updateEfficiencyDisplay();
         }
 
         function createCharCard(charName) {
@@ -853,9 +1281,17 @@
             card.className = 'char-card';
             card.setAttribute('data-char', charName);
             card.setAttribute('draggable', 'true');
-            
+
             // Init Graph Data
-            charDpsData[charName] = { accIn: 0, accOut: 0, incoming: [], outgoing: [] };
+            charDpsData[charName] = {
+                accIn: 0, accOut: 0,
+                accShield: 0, accArmor: 0, accCap: 0,
+                incoming: [], outgoing: [],
+                shield: [], armor: [], cap: []
+            };
+
+            // Init Time Stats (Set of active seconds)
+            charTimeStats[charName] = new Set();
 
             addDragEvents(card);
             card.onclick = (e) => {
@@ -865,6 +1301,7 @@
                 setTimeout(() => card.classList.remove('focus-flash'), 400);
                 focusClient(charName);
             };
+
             const header = document.createElement('div');
             header.className = 'card-header';
             const leftInfo = document.createElement('div');
@@ -874,44 +1311,54 @@
             nameSpan.textContent = charName;
             nameSpan.style.color = stringToColor(charName);
             leftInfo.appendChild(nameSpan);
+
+            // HEADER RIGHT: STATS
             const rightGroup = document.createElement('div');
             rightGroup.className = 'header-right-group';
             const rightInfo = document.createElement('div');
             rightInfo.className = 'header-right-info';
-            const effSpan = document.createElement('span');
-            effSpan.className = 'efficiency-stat';
-            effSpan.textContent = 'EFF: 0%';
-            const activeSpan = document.createElement('span');
-            activeSpan.className = 'last-active';
-            activeSpan.textContent = '--:--:--';
-            rightInfo.appendChild(effSpan);
-            rightInfo.appendChild(activeSpan);
+
+            // Damage Efficiency
+            const effDmg = document.createElement('span');
+            effDmg.className = 'efficiency-stat eff-dmg';
+            effDmg.innerHTML = `<span class="eff-label">D-EFF</span><span class="eff-val">0%</span>`;
+
+            // Time Efficiency
+            const effTime = document.createElement('span');
+            effTime.className = 'efficiency-stat eff-time';
+            effTime.innerHTML = `<span class="eff-label">T-EFF</span><span class="eff-val">0%</span>`;
+
+            // Removed the Last Active timestamp span creation
+
+            rightInfo.appendChild(effDmg);
+            rightInfo.appendChild(effTime);
+            // rightInfo.appendChild(activeSpan); // Removed
+
             const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '&times;'; 
+            closeBtn.innerHTML = '&times;';
             closeBtn.className = 'btn-close';
             closeBtn.title = 'Hide Character';
             closeBtn.onclick = (e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 hideCharacter(charName);
             };
             rightGroup.appendChild(rightInfo);
             rightGroup.appendChild(closeBtn);
             header.appendChild(leftInfo);
             header.appendChild(rightGroup);
-            
+
             card.appendChild(header);
             card.appendChild(createSection('Incoming', 'incoming', true)); // Add graph
             card.appendChild(createSection('Outgoing', 'outgoing', true)); // Add graph
-            card.appendChild(createSection('Logistics & Events', 'misc', false));
-            
+            card.appendChild(createSection('Logistics', 'logistics', true)); // Shield/Armor Graph
+            card.appendChild(createSection('Events', 'events', true)); // Cap Graph
+
             dashboardFleet.appendChild(card);
             charCards[charName] = card;
             reorderCards();
         }
 
-        function focusClient(charName) {
-            if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'focus', character: charName }));
-        }
+        // ... existing helper functions (createSection, updateEfficiencyDisplay, etc) ...
 
         function createSection(title, type, hasGraph) {
             const section = document.createElement('div');
@@ -936,7 +1383,7 @@
 
         function triggerDamageAlert(cardElement) {
             cardElement.classList.remove('taking-damage');
-            void cardElement.offsetWidth; 
+            void cardElement.offsetWidth;
             cardElement.classList.add('taking-damage');
             clearTimeout(cardElement.damageTimeout);
             cardElement.damageTimeout = setTimeout(() => {
@@ -948,13 +1395,168 @@
             let hash = 0;
             for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
             const h = hash % 360;
-            return `hsl(${h}, 70%, 70%)`; 
+            return `hsl(${h}, 70%, 70%)`;
         }
 
         function addDragEvents(card) {
             card.addEventListener('dragstart', () => card.classList.add('dragging'));
             card.addEventListener('dragend', () => card.classList.remove('dragging'));
         }
+
+        function updateEfficiencyDisplay() {
+            // Calculate Max Active Seconds in Fleet
+            let maxActiveSeconds = 0;
+            Object.keys(charTimeStats).forEach(char => {
+                const set = charTimeStats[char];
+                if (set && set.size > maxActiveSeconds) {
+                    maxActiveSeconds = set.size;
+                }
+            });
+
+            Object.keys(charCards).forEach(charName => {
+                const card = charCards[charName];
+
+                // DAMAGE EFFICIENCY
+                const myDamage = charDamageStats[charName] || 0;
+                const dmgElem = card.querySelector('.eff-dmg .eff-val');
+                let dPercent = 0;
+                if (maxFleetDamage > 0) dPercent = Math.round((myDamage / maxFleetDamage) * 100);
+                dmgElem.textContent = `${dPercent}%`;
+
+                // Colorize D-EFF
+                const dParent = card.querySelector('.eff-dmg');
+                dParent.className = 'efficiency-stat eff-dmg';
+                if (dPercent >= 95) dParent.classList.add('eff-high');
+                else if (dPercent >= 50) dParent.classList.add('eff-med');
+                else dParent.classList.add('eff-low');
+
+                // TIME EFFICIENCY (Based on active seconds Set size)
+                const myActiveSet = charTimeStats[charName];
+                const tElem = card.querySelector('.eff-time .eff-val');
+                let tPercent = 0;
+                if (maxActiveSeconds > 0 && myActiveSet) {
+                    tPercent = Math.round((myActiveSet.size / maxActiveSeconds) * 100);
+                }
+                tElem.textContent = `${tPercent}%`;
+
+                // Colorize T-EFF
+                const tParent = card.querySelector('.eff-time');
+                tParent.className = 'efficiency-stat eff-time';
+                if (tPercent >= 95) tParent.classList.add('eff-high');
+                else if (tPercent >= 50) tParent.classList.add('eff-med');
+                else tParent.classList.add('eff-low');
+            });
+        }
+
+        // --- CHAT LOGIC ---
+
+        function handleChatUpdate(payload) {
+            const { character, channelName, data } = payload;
+            if (!channelName) return;
+
+            // Check if channel is hidden
+            if (hiddenChannels.has(channelName)) return;
+
+            const cardId = `chat-${channelName}`;
+            if (!chatCards[cardId]) createChatCard(channelName, cardId);
+            if (!chatHistory[channelName]) chatHistory[channelName] = new Set();
+
+            const card = chatCards[cardId];
+            const container = card.querySelector('.chat-content');
+            const lines = data.split(/\r?\n/);
+
+            let lastTime = '';
+
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                const chatMatch = line.match(/\[\s*(.*?)\s*\]\s*(.*?) > (.*)/);
+                const systemMatch = !chatMatch ? line.match(/\[\s*(.*?)\s*\]\s*(.*)/) : null;
+
+                if (chatMatch) {
+                    const timeStr = chatMatch[1].split(' ')[1] || chatMatch[1];
+                    const sender = chatMatch[2];
+                    const message = chatMatch[3];
+                    addChatLine(channelName, timeStr, sender, message, 'chat-message', container);
+                    lastTime = timeStr;
+                }
+                else if (systemMatch) {
+                    const timeStr = systemMatch[1].split(' ')[1] || systemMatch[1];
+                    const message = systemMatch[2];
+                    addChatLine(channelName, timeStr, "", message, 'chat-system', container);
+                    lastTime = timeStr;
+                }
+            });
+
+            if (container.children.length > 100) {
+                container.removeChild(container.firstChild);
+            }
+
+            requestAnimationFrame(() => {
+                container.scrollTop = container.scrollHeight;
+            });
+
+            if (lastTime) {
+                card.querySelector('.last-active').textContent = lastTime;
+            }
+        }
+
+        function addChatLine(channelName, time, sender, message, cssClass, container) {
+            const signature = `${time}|${sender}|${message}`;
+            if (chatHistory[channelName].has(signature)) return;
+
+            chatHistory[channelName].add(signature);
+            if (chatHistory[channelName].size > 500) {
+                const first = chatHistory[channelName].values().next().value;
+                chatHistory[channelName].delete(first);
+            }
+
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'chat-entry';
+            const senderHtml = sender ? `<span class="chat-sender">${sender}</span>` : '';
+            entryDiv.innerHTML = `
+                    <span class="timestamp">${time}</span>
+                    ${senderHtml}
+                    <span class="chat-message ${cssClass}">${message}</span>
+                `;
+            container.appendChild(entryDiv);
+        }
+
+        function createChatCard(channelName, id) {
+            const card = document.createElement('div');
+            card.className = 'char-card';
+            card.style.height = '100%';
+            const header = document.createElement('div');
+            header.className = 'card-header';
+            header.style.background = 'rgba(0, 50, 100, 0.8)';
+            const leftInfo = document.createElement('div');
+            leftInfo.className = 'header-left-info';
+            leftInfo.innerHTML = `<span class="char-name">${channelName}</span>`;
+            const rightGroup = document.createElement('div');
+            rightGroup.className = 'header-right-group';
+            const rightInfo = document.createElement('div');
+            rightInfo.className = 'header-right-info';
+            rightInfo.innerHTML = `<span class="last-active">Active</span>`;
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.className = 'btn-close';
+            closeBtn.title = 'Hide Channel';
+            closeBtn.onclick = (e) => {
+                e.stopPropagation();
+                hideChannel(channelName);
+            };
+            rightGroup.appendChild(rightInfo);
+            rightGroup.appendChild(closeBtn);
+            header.appendChild(leftInfo);
+            header.appendChild(rightGroup);
+            const content = document.createElement('div');
+            content.className = 'chat-content';
+            card.appendChild(header);
+            card.appendChild(content);
+            dashboardChat.appendChild(card);
+            chatCards[id] = card;
+        }
+
+        // --- DRAG & DROP & SAVE ---
 
         dashboardFleet.addEventListener('dragover', e => {
             e.preventDefault();
@@ -969,8 +1571,8 @@
             return draggableElements.reduce((closest, child) => {
                 const box = child.getBoundingClientRect();
                 if (x < box.right && y < box.bottom && x > box.left && y > box.top) {
-                     if (x < box.left + box.width / 2) return { offset: 0, element: child };
-                     else return { offset: 0, element: child.nextElementSibling };
+                    if (x < box.left + box.width / 2) return { offset: 0, element: child };
+                    else return { offset: 0, element: child.nextElementSibling };
                 }
                 return closest;
             }, { offset: Number.NEGATIVE_INFINITY }).element;
