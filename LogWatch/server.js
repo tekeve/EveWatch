@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let activeFiles = new Map();
 const clients = new Set();
-let watcher = null;
+let watcher = null; 
 
 // --- LOGIC ---
 
@@ -105,7 +105,7 @@ async function parseLogHeader(filePath) {
 
                 // Decode
                 let content = buffer.toString(encoding);
-
+                
                 // Extract Listener (Character)
                 const listenerMatch = content.match(/Listener:\s+(.*?)(\r|\n|$)/);
                 const character = (listenerMatch && listenerMatch[1]) ? listenerMatch[1].trim() : 'Unknown';
@@ -164,7 +164,7 @@ function checkFileForUpdates(filePath) {
         if (stats.size > fileData.currentSize) {
             readContent(filePath, fileData.currentSize, stats.size);
         } else if (stats.size < fileData.currentSize) {
-            fileData.currentSize = 0;
+            fileData.currentSize = 0; 
         }
     });
 }
@@ -182,7 +182,7 @@ async function addFileToWatch(filePath, stats) {
     if (age > MAX_FILE_AGE) return;
 
     const { character, channelName, encoding } = await parseLogHeader(filePath);
-
+    
     const kind = isChatlog ? 'chat' : 'game';
 
     let startPosition = Math.max(0, stats.size - INITIAL_READ_BUFFER);
@@ -238,7 +238,7 @@ function startWatching(targetDir) {
         console.log('[SYSTEM] Stopping previous watcher...');
         watcher.close();
         activeFiles.clear();
-        broadcast({ type: 'reset' });
+        broadcast({ type: 'reset' }); 
     }
 
     if (!fs.existsSync(targetDir)) {
@@ -256,7 +256,7 @@ function startWatching(targetDir) {
         ignoreInitial: false,
         depth: 2,
         usePolling: true, // Force polling to ensure updates are caught on all file systems (OneDrive, etc)
-        interval: 100,   // Check every 0.1 seconds
+        interval: 100,    // CHANGED: Check every 100ms (was 1000)
     });
 
     watcher
@@ -291,7 +291,7 @@ wss.on('connection', (ws) => {
     ws.on('message', (rawMessage) => {
         try {
             const message = JSON.parse(rawMessage);
-
+            
             if (message.type === 'focus' && message.character) {
                 focusClientWindow(message.character);
             }
@@ -299,7 +299,7 @@ wss.on('connection', (ws) => {
             if (message.type === 'set-path' && message.path) {
                 console.log(`[CONFIG] Path change: ${message.path}`);
                 const success = startWatching(message.path);
-
+                
                 if (success) {
                     broadcast({ type: 'info', message: `Log path updated to: ${message.path}` });
                     ws.send(JSON.stringify({ type: 'config-success', path: message.path }));
